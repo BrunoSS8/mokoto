@@ -1,10 +1,12 @@
 mod expression;
 mod declaration;
 mod pattern;
+mod token_set;
 
-use crate::lexer::{Lexer, SyntaxKind};
+use crate::lexer::{Lexer, SyntaxKind, SyntaxKind::*};
 use crate::syntax::{MotokoLanguage, SyntaxNode};
 use declaration::decl;
+use token_set::{TokenSet};
 use rowan::{Checkpoint, GreenNode, GreenNodeBuilder, Language};
 use std::iter::Peekable;
 
@@ -87,6 +89,14 @@ impl<'a> Parser<'a> {
         // Fine to unwrap here, because we return Eof tokens if we're done with the input
         let (_, (kind, _), _) = self.lexer.peek().unwrap();
         *kind
+    }
+
+    fn at(&mut self, kind: SyntaxKind) -> bool {
+        self.peek() == kind
+    }
+
+    fn at_ts(&mut self, kinds: TokenSet) -> bool {
+        kinds.contains(self.peek())
     }
 
     fn error(&mut self, msg: &str) {

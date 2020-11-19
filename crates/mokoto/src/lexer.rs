@@ -93,11 +93,23 @@ pub(crate) enum SyntaxKind {
     #[token("let")]
     LetKw,
 
+    #[token("switch")]
+    SwitchKw,
+
+    #[token("case")]
+    CaseKw,
+
+    #[token("true")]
+    TrueKw,
+
+    #[token("false")]
+    FalseKw,
+
     #[regex("[A-Za-z][A-Za-z0-9]*")]
     Ident,
 
     #[regex("[0-9]+")]
-    Number,
+    NumberLit,
 
     #[token("+")]
     Plus,
@@ -143,7 +155,7 @@ pub(crate) enum SyntaxKind {
     // Composite nodes
     // Expressions
     Parenthesize, // a parenthesized expression
-    LitE,         // a literal
+    LiteralE,     // a literal
     VarE,         // wraps a WORD token
     FuncE,        // a func expression
     ApplicationE, // a function application
@@ -199,7 +211,7 @@ mod tests {
 
     #[test]
     fn lex_number() {
-        check("123456", SyntaxKind::Number);
+        check("123456", SyntaxKind::NumberLit);
     }
 
     #[test]

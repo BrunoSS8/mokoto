@@ -1,15 +1,10 @@
-use super::Parser;
-use crate::lexer::SyntaxKind;
+mod atom;
+use super::*;
+
 
 pub(super) fn expr(p: &mut Parser) {
-    match p.peek() {
-        SyntaxKind::Number => literal_number(p),
-        _ => unreachable!("Unknown expr.")
+    if atom::literal(p) {
+        return
     }
-}
-
-fn literal_number(p: &mut Parser) {
-    p.start_node(SyntaxKind::LitE);
-    p.bump(SyntaxKind::Number);
-    p.finish_node();
+    unreachable!("Can only do literals so far.")
 }
