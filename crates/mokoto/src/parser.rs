@@ -1,6 +1,7 @@
 mod expression;
 mod declaration;
 mod pattern;
+mod types;
 mod token_set;
 
 use crate::lexer::{Lexer, SyntaxKind, SyntaxKind::*};
@@ -39,6 +40,19 @@ impl<'a> Parser<'a> {
         }
     }
 
+    pub fn parse_typ(mut self) -> Parse {
+        self.start_node(SyntaxKind::Root);
+
+        types::typ(&mut self);
+
+        self.finish_node();
+
+        Parse {
+            green_node: self.builder.finish(),
+            errors: self.errors
+        }
+    }
+
     fn start_node(&mut self, kind: SyntaxKind) {
         self.builder.start_node(MotokoLanguage::kind_to_raw(kind));
     }
@@ -50,6 +64,11 @@ impl<'a> Parser<'a> {
 
     fn finish_node(&mut self) {
         self.builder.finish_node();
+    }
+
+    fn finish_at(&mut self, c: Checkpoint, kind: SyntaxKind) {
+        self.start_node_at(c, kind);
+        self.finish_node();
     }
 
     fn checkpoint(&self) -> Checkpoint {

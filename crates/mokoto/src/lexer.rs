@@ -93,6 +93,9 @@ pub(crate) enum SyntaxKind {
     #[token("let")]
     LetKw,
 
+    #[token("var")]
+    VarKw,
+
     #[token("switch")]
     SwitchKw,
 
@@ -110,6 +113,9 @@ pub(crate) enum SyntaxKind {
 
     #[regex("[0-9]+")]
     NumberLit,
+
+    #[token(".")]
+    Dot,
 
     #[token("+")]
     Plus,
@@ -132,11 +138,26 @@ pub(crate) enum SyntaxKind {
     #[token(")")]
     RParen,
 
+    #[token("[")]
+    LBracket,
+
+    #[token("]")]
+    RBracket,
+
     #[token("{")]
     LBrace,
 
     #[token("}")]
     RBrace,
+
+    #[token("<")]
+    Lt,
+
+    #[token(">")]
+    Gt,
+
+    #[token("?")]
+    Question,
 
     #[token(";")]
     Semicolon,
@@ -153,6 +174,14 @@ pub(crate) enum SyntaxKind {
     Eof,
 
     // Composite nodes
+    // Types
+    OptionalT,
+    ParenT,
+    AsyncT,
+    PathT,
+    ArrayT,
+    ObjT,
+
     // Expressions
     Parenthesize, // a parenthesized expression
     LiteralE,     // a literal
@@ -168,6 +197,11 @@ pub(crate) enum SyntaxKind {
 
     // Patterns
     VarP,
+
+    // Modifiers
+    Path,
+    MutModifier,
+    TypArgs,
 }
 
 #[cfg(test)]
