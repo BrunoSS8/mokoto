@@ -21,16 +21,24 @@ fn opt_typ_args(p: &mut Parser) {
     }
 }
 
-fn path_typ(p: &mut Parser) {
+fn path_or_name(p: &mut Parser) -> Option<Checkpoint> {
     assert!(p.at(Ident));
     let c = p.checkpoint();
     p.bump(Ident);
-    while p.at(Dot) {
-        p.bump(Dot);
+    if !p.at(Dot) {
+        return Some(c)
+    }
+    while p.eat(Dot) {
         // TODO: Error
         p.bump(Ident);
     }
-    p.finish_at(c, Path)
+    p.finish_at(c, Path);
+    None
+
+}
+
+fn path(p: &mut Parser) {
+    path_or_name(p).map(|c| p.finish_at(c, Path));
 }
 
 fn array_typ(p: &mut Parser) {
@@ -43,12 +51,60 @@ fn array_typ(p: &mut Parser) {
     p.finish_at(c, ArrayT)
 }
 
+fn paren_or_tuple_typ(p: &mut Parser) {
+    assert!(p.at(LParen));
+    let c = p.checkpoint();
+    p.bump(LParen);
+    if p.eat(RParen) {
+        p.finish_at(c, TupT);
+        return
+    }
+    typ_item(p);
+    if p.at(RParen) {
+        p.bump(RParen);
+        p.finish_at(c, ParenT);
+        return
+    }
+    while p.eat(Comma) {
+        typ_item(p);
+    }
+    // TODO Error
+    p.bump(RParen);
+    p.finish_at(c, TupT)
+}
+
+fn typ_item(p: &mut Parser) {
+    let c = p.checkpoint();
+    if p.at(Ident) {
+        match path_or_name(p) {
+            Some(c_label) if p.at(Colon) => {
+                p.finish_at(c_label, Name);
+                p.bump(Colon);
+                typ(p);
+                p.finish_at(c, NamedT);
+            }
+            Some(c_path) => {
+                p.finish_at(c_path, Path);
+                opt_typ_args(p);
+                p.finish_at(c, PathT);
+            }
+            None => {
+                opt_typ_args(p);
+                p.finish_at(c, PathT);
+            }
+        };
+    } else {
+        typ(p);
+    }
+}
+
 fn typ_nullary(p: &mut Parser) {
     match p.peek() {
+        LParen => paren_or_tuple_typ(p),
         LBracket => array_typ(p),
         Ident => {
             let c = p.checkpoint();
-            path_typ(p);
+            path(p);
             opt_typ_args(p);
             p.finish_at(c, PathT)
 
@@ -68,5 +124,10 @@ fn typ_un(p: &mut Parser) {
 }
 
 pub(super) fn typ(p: &mut Parser) {
-    typ_un(p)
+    let c = p.checkpoint();
+    typ_un(p);
+    if p.eat(Arrow) {
+        typ(p);
+        p.finish_at(c, FuncT);
+    }
 }

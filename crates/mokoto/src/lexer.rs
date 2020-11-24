@@ -159,6 +159,9 @@ pub(crate) enum SyntaxKind {
     #[token("?")]
     Question,
 
+    #[token(":")]
+    Colon,
+
     #[token(";")]
     Semicolon,
 
@@ -180,7 +183,10 @@ pub(crate) enum SyntaxKind {
     AsyncT,
     PathT,
     ArrayT,
+    FuncT,
     ObjT,
+    TupT,
+    NamedT,
 
     // Expressions
     Parenthesize, // a parenthesized expression
@@ -200,6 +206,7 @@ pub(crate) enum SyntaxKind {
 
     // Modifiers
     Path,
+    Name,
     MutModifier,
     TypArgs,
 }
