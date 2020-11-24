@@ -26,7 +26,7 @@ fn path_or_name(p: &mut Parser) -> Option<Checkpoint> {
     let c = p.checkpoint();
     p.bump(Ident);
     if !p.at(Dot) {
-        return Some(c)
+        return Some(c);
     }
     while p.eat(Dot) {
         // TODO: Error
@@ -34,7 +34,6 @@ fn path_or_name(p: &mut Parser) -> Option<Checkpoint> {
     }
     p.finish_at(c, Path);
     None
-
 }
 
 fn path(p: &mut Parser) {
@@ -57,13 +56,12 @@ fn paren_or_tuple_typ(p: &mut Parser) {
     p.bump(LParen);
     if p.eat(RParen) {
         p.finish_at(c, TupT);
-        return
+        return;
     }
     typ_item(p);
-    if p.at(RParen) {
-        p.bump(RParen);
+    if p.eat(RParen) {
         p.finish_at(c, ParenT);
-        return
+        return;
     }
     while p.eat(Comma) {
         typ_item(p);
@@ -107,9 +105,8 @@ fn typ_nullary(p: &mut Parser) {
             path(p);
             opt_typ_args(p);
             p.finish_at(c, PathT)
-
-        },
-        _ => unreachable!()
+        }
+        _ => unreachable!(),
     }
 }
 
