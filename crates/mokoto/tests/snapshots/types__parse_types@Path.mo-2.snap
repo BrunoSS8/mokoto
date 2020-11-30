@@ -1,0 +1,13 @@
+---
+source: crates/mokoto/tests/types.rs
+expression: parse.debug_tree()
+input_file: crates/mokoto/tests/passing/types/Path.mo
+---
+Root@0..12
+  PathT@0..12
+    Path@0..12
+      Ident@0..4 "Path"
+      Dot@4..5 "."
+      Ident@5..7 "to"
+      Dot@7..8 "."
+      Ident@8..12 "type"
