@@ -13,3 +13,5 @@ query A -> B
 shared A -> B
 ---
 shared query A -> B
+---
+<K <: Int, V> A -> B
