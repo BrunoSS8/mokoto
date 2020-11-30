@@ -1,10 +1,17 @@
 use crate::lexer::SyntaxKind;
+use rowan::SmolStr;
 use num_traits::{FromPrimitive, ToPrimitive};
+
+pub mod ast;
 
 #[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub(crate) enum MotokoLanguage {}
 
 pub(crate) type SyntaxNode = rowan::SyntaxNode<MotokoLanguage>;
+pub(crate) type SyntaxToken = rowan::SyntaxToken<MotokoLanguage>;
+pub(crate) type SyntaxElement = rowan::SyntaxElement<MotokoLanguage>;
+pub(crate) type SyntaxNodeChildren = rowan::SyntaxNodeChildren<MotokoLanguage>;
+pub(crate) type SyntaxElementChildren = rowan::SyntaxElementChildren<MotokoLanguage>;
 
 impl rowan::Language for MotokoLanguage {
     type Kind = SyntaxKind;
