@@ -9,8 +9,9 @@ fn parse_types() {
     glob!("passing/types/*.mo", |path| {
         let input = fs::read_to_string(path).unwrap();
         for inp in input.split("---\n") {
-          let parse = Parser::new(&inp).parse_typ();
-          assert_snapshot!(parse.debug_tree());
+            let parse = Parser::new(&inp).parse_typ();
+            let output = format!("{}\n---\n{}", inp, parse.debug_tree());
+            assert_snapshot!(output);
         }
     });
 }

@@ -85,6 +85,11 @@ fn typ_item(p: &mut Parser) {
                 p.finish_at(c_path, Path);
                 opt_typ_args(p);
                 p.finish_at(c, PathT);
+                if p.eat(Arrow) {
+                    typ(p);
+                    p.finish_at(c, FuncT);
+                }
+
             }
             None => {
                 opt_typ_args(p);
@@ -106,7 +111,7 @@ fn typ_nullary(p: &mut Parser) {
             opt_typ_args(p);
             p.finish_at(c, PathT)
         }
-        _ => unreachable!(),
+        _ => unreachable!("What"),
     }
 }
 

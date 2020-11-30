@@ -1,7 +1,10 @@
 ---
 source: crates/mokoto/tests/types.rs
-expression: parse.debug_tree()
+expression: output
 input_file: crates/mokoto/tests/passing/types/Path.mo
+---
+Path.to.type
+
 ---
 Root@0..12
   PathT@0..12

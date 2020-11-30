@@ -1,0 +1,27 @@
+---
+source: crates/mokoto/tests/types.rs
+expression: output
+input_file: crates/mokoto/tests/passing/types/Func.mo
+---
+(A, B) -> C
+
+---
+Root@0..11
+  FuncT@0..11
+    TupT@0..7
+      LParen@0..1 "("
+      PathT@1..2
+        Path@1..2
+          Ident@1..2 "A"
+      Comma@2..3 ","
+      Space@3..4 " "
+      PathT@4..5
+        Path@4..5
+          Ident@4..5 "B"
+      RParen@5..6 ")"
+      Space@6..7 " "
+    Arrow@7..9 "->"
+    Space@9..10 " "
+    PathT@10..11
+      Path@10..11
+        Ident@10..11 "C"
