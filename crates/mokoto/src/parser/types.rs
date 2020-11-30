@@ -171,7 +171,9 @@ fn typ_un(p: &mut Parser) {
 
 pub(super) fn typ(p: &mut Parser) {
     let c = p.checkpoint();
-    if opt_func_sort(p) || opt_typ_params(p) {
+    let fs = opt_func_sort(p);
+    let tp = opt_typ_params(p);
+    if fs || tp {
         typ_un(p);
         // TODO: Error
         p.bump(Arrow);
