@@ -7,7 +7,23 @@ fn opt_mutability(p: &mut Parser) {
     }
 }
 
-fn opt_typ_args(p: &mut Parser) {
+fn opt_typ_params(p: &mut Parser) -> bool {
+    let c = p.checkpoint();
+    if p.eat(Lt) {
+        typ_bind(p);
+        while p.eat(Comma) {
+            typ_bind(p);
+        }
+        if !p.eat(Gt) {
+            // TODO Error
+        }
+        p.finish_at(c, TypParams);
+        return true
+    }
+    false
+}
+
+fn opt_typ_args(p: &mut Parser) -> bool {
     let c = p.checkpoint();
     if p.eat(Lt) {
         typ(p);
@@ -17,8 +33,10 @@ fn opt_typ_args(p: &mut Parser) {
         if !p.eat(Gt) {
             // TODO Error
         }
-        p.finish_at(c, TypArgs)
+        p.finish_at(c, TypArgs);
+        return true
     }
+    false
 }
 
 fn path_or_name(p: &mut Parser) -> Option<Checkpoint> {
@@ -50,6 +68,20 @@ fn array_typ(p: &mut Parser) {
     p.finish_at(c, ArrayT)
 }
 
+fn opt_func_sort(p: &mut Parser) -> bool {
+    let c = p.checkpoint();
+    if p.eat(SharedKw) {
+        p.eat(QueryKw);
+        p.finish_at(c, FuncSort);
+        true
+    } else if p.eat(QueryKw) {
+        p.finish_at(c, FuncSort);
+        true
+    } else {
+        false
+    }
+}
+
 fn paren_or_tuple_typ(p: &mut Parser) {
     assert!(p.at(LParen));
     let c = p.checkpoint();
@@ -69,6 +101,17 @@ fn paren_or_tuple_typ(p: &mut Parser) {
     // TODO Error
     p.bump(RParen);
     p.finish_at(c, TupT)
+}
+
+fn typ_bind(p: &mut Parser) {
+    let c = p.checkpoint();
+    if !p.eat(Ident) {
+        // TODO: Error
+    }
+    if p.eat(Sub) {
+        typ(p)
+    }
+    p.finish_at(c, TypBind)
 }
 
 fn typ_item(p: &mut Parser) {
@@ -111,7 +154,8 @@ fn typ_nullary(p: &mut Parser) {
             opt_typ_args(p);
             p.finish_at(c, PathT)
         }
-        _ => unreachable!("What"),
+        // TODO: Error
+        _ => unreachable!("Unexpected token in typ_nullary"),
     }
 }
 
@@ -127,9 +171,17 @@ fn typ_un(p: &mut Parser) {
 
 pub(super) fn typ(p: &mut Parser) {
     let c = p.checkpoint();
-    typ_un(p);
-    if p.eat(Arrow) {
+    if opt_func_sort(p) || opt_typ_params(p) {
+        typ_un(p);
+        // TODO: Error
+        p.bump(Arrow);
         typ(p);
         p.finish_at(c, FuncT);
+    } else {
+      typ_un(p);
+      if p.eat(Arrow) {
+        typ(p);
+        p.finish_at(c, FuncT);
+      }
     }
 }

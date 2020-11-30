@@ -108,6 +108,12 @@ pub(crate) enum SyntaxKind {
     #[token("false")]
     FalseKw,
 
+    #[token("shared")]
+    SharedKw,
+
+    #[token("query")]
+    QueryKw,
+
     #[regex("[A-Za-z][A-Za-z0-9]*")]
     Ident,
 
@@ -155,6 +161,9 @@ pub(crate) enum SyntaxKind {
 
     #[token(">")]
     Gt,
+
+    #[token("<:")]
+    Sub,
 
     #[token("?")]
     Question,
@@ -209,104 +218,7 @@ pub(crate) enum SyntaxKind {
     Name,
     MutModifier,
     TypArgs,
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn check(input: &str, kind: SyntaxKind) {
-        let mut lexer = Lexer::new(input);
-        assert_eq!(lexer.next(), Some((vec![], (kind, input), vec![])));
-    }
-
-    #[test]
-    fn lex_fn_keyword() {
-        check("func", SyntaxKind::FnKw);
-    }
-
-    #[test]
-    fn lex_let_keyword() {
-        check("let", SyntaxKind::LetKw);
-    }
-
-    #[test]
-    fn lex_alphabetic_identifier() {
-        check("abcd", SyntaxKind::Ident);
-    }
-
-    #[test]
-    fn lex_alphanumeric_identifier() {
-        check("ab123cde456", SyntaxKind::Ident);
-    }
-
-    #[test]
-    fn lex_mixed_case_identifier() {
-        check("ABCdef", SyntaxKind::Ident);
-    }
-
-    #[test]
-    fn lex_single_char_identifier() {
-        check("x", SyntaxKind::Ident);
-    }
-
-    #[test]
-    fn lex_number() {
-        check("123456", SyntaxKind::NumberLit);
-    }
-
-    #[test]
-    fn lex_plus() {
-        check("+", SyntaxKind::Plus);
-    }
-
-    #[test]
-    fn lex_minus() {
-        check("-", SyntaxKind::Minus);
-    }
-
-    #[test]
-    fn lex_star() {
-        check("*", SyntaxKind::Star);
-    }
-
-    #[test]
-    fn lex_slash() {
-        check("/", SyntaxKind::Slash);
-    }
-
-    #[test]
-    fn lex_equals() {
-        check("=", SyntaxKind::Equals);
-    }
-
-    #[test]
-    fn lex_left_parenthesis() {
-        check("(", SyntaxKind::LParen);
-    }
-
-    #[test]
-    fn lex_right_parenthesis() {
-        check(")", SyntaxKind::RParen);
-    }
-
-    #[test]
-    fn lex_left_brace() {
-        check("{", SyntaxKind::LBrace);
-    }
-
-    #[test]
-    fn lex_right_brace() {
-        check("}", SyntaxKind::RBrace);
-    }
-
-    #[test]
-    fn lex_semicolon() {
-        check(";", SyntaxKind::Semicolon);
-    }
-
-    #[test]
-    fn lex_arrow() {
-        check("->", SyntaxKind::Arrow);
-    }
+    TypParams,
+    TypBind,
+    FuncSort,
 }

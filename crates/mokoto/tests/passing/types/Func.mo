@@ -7,3 +7,9 @@ A -> (C, B)
 A -> C -> B
 ---
 (a : A, b : B) -> (c : C, d : D)
+---
+query A -> B
+---
+shared A -> B
+---
+shared query A -> B
