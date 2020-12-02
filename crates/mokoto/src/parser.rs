@@ -1,18 +1,17 @@
-mod expression;
 mod declaration;
+mod expression;
 mod pattern;
-mod types;
 mod token_set;
+mod types;
 
-use crate::lexer::{Lexer, SyntaxKind, SyntaxKind::*};
+use crate::lexer::{Lexer, SyntaxKind, SyntaxKind::*, Token};
 use crate::syntax::{MotokoLanguage, SyntaxNode};
 use declaration::decl;
-use token_set::{TokenSet};
 use rowan::{Checkpoint, GreenNode, GreenNodeBuilder, Language};
-use std::iter::Peekable;
+use token_set::TokenSet;
 
 pub struct Parser<'a> {
-    lexer: Peekable<Lexer<'a>>,
+    tokens: Vec<Token<'a>>,
     builder: GreenNodeBuilder<'static>,
     // TODO: Be smarter here
     errors: Vec<String>,
@@ -20,10 +19,12 @@ pub struct Parser<'a> {
 
 impl<'a> Parser<'a> {
     pub fn new(input: &'a str) -> Self {
+        let mut tkns = Lexer::lex(input);
+        tkns.reverse();
         Self {
-            lexer: Lexer::new(input).peekable(),
+            tokens: tkns,
             builder: GreenNodeBuilder::new(),
-            errors: vec![]
+            errors: vec![],
         }
     }
 
@@ -36,7 +37,7 @@ impl<'a> Parser<'a> {
 
         Parse {
             green_node: self.builder.finish(),
-            errors: self.errors
+            errors: self.errors,
         }
     }
 
@@ -49,7 +50,7 @@ impl<'a> Parser<'a> {
 
         Parse {
             green_node: self.builder.finish(),
-            errors: self.errors
+            errors: self.errors,
         }
     }
 
@@ -76,7 +77,7 @@ impl<'a> Parser<'a> {
     }
 
     fn bump_any(&mut self) {
-        let (leading, (kind, text), trailing) = self.lexer.next().unwrap();
+        let (leading, (kind, text), trailing) = self.tokens.pop().unwrap();
 
         for (kind, text) in leading {
             self.builder
@@ -98,16 +99,23 @@ impl<'a> Parser<'a> {
 
     fn eat(&mut self, kind: SyntaxKind) -> bool {
         if self.peek() != kind {
-            return false
+            return false;
         }
         self.bump_any();
         true
     }
 
+    fn nth(&mut self, n: usize) -> SyntaxKind {
+        let len = self.tokens.len();
+        if n >= len {
+            SyntaxKind::Eof
+        } else {
+            self.tokens[n - len].1 .0
+        }
+    }
+
     fn peek(&mut self) -> SyntaxKind {
-        // Fine to unwrap here, because we return Eof tokens if we're done with the input
-        let (_, (kind, _), _) = self.lexer.peek().unwrap();
-        *kind
+        self.nth(0)
     }
 
     fn at(&mut self, kind: SyntaxKind) -> bool {
@@ -125,7 +133,7 @@ impl<'a> Parser<'a> {
 
 pub struct Parse {
     green_node: GreenNode,
-    errors: Vec<String>
+    errors: Vec<String>,
 }
 
 impl Parse {

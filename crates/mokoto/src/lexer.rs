@@ -1,6 +1,12 @@
 use logos::Logos;
 use num_derive::{FromPrimitive, ToPrimitive};
 
+pub(crate) type Token<'a> = (
+    Vec<(SyntaxKind, &'a str)>,
+    (SyntaxKind, &'a str),
+    Vec<(SyntaxKind, &'a str)>,
+);
+
 pub(crate) struct Lexer<'a> {
     inner: logos::Lexer<'a, SyntaxKind>,
     lookahead: Option<(SyntaxKind, &'a str)>,
@@ -11,6 +17,19 @@ impl<'a> Lexer<'a> {
         Self {
             inner: SyntaxKind::lexer(input),
             lookahead: None,
+        }
+    }
+
+    pub(crate) fn lex(input: &'a str) -> Vec<Token<'a>> {
+        let mut lexer = Lexer::new(input);
+        let mut tokens = vec![];
+        loop {
+            let tkn = lexer.next().unwrap();
+            if tkn.1 .0 == SyntaxKind::Eof {
+                tokens.push(tkn);
+                return tokens;
+            }
+            tokens.push(tkn);
         }
     }
 }

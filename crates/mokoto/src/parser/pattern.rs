@@ -4,7 +4,7 @@ use crate::lexer::SyntaxKind;
 pub(super) fn pat(p: &mut Parser) {
     match p.peek() {
         SyntaxKind::Ident => var_pattern(p),
-        _ => unreachable!("Unknown pattern.")
+        _ => unreachable!("Unknown pattern."),
     }
 }
 

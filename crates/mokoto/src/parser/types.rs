@@ -1,10 +1,12 @@
 use super::*;
 
-fn opt_mutability(p: &mut Parser) {
+fn opt_mutability(p: &mut Parser) -> bool {
     let c = p.checkpoint();
     if p.eat(VarKw) {
-        p.finish_at(c, MutModifier)
+        p.finish_at(c, MutModifier);
+        return true;
     }
+    false
 }
 
 fn opt_typ_params(p: &mut Parser) -> bool {
@@ -18,7 +20,7 @@ fn opt_typ_params(p: &mut Parser) -> bool {
             // TODO Error
         }
         p.finish_at(c, TypParams);
-        return true
+        return true;
     }
     false
 }
@@ -34,7 +36,7 @@ fn opt_typ_args(p: &mut Parser) -> bool {
             // TODO Error
         }
         p.finish_at(c, TypArgs);
-        return true
+        return true;
     }
     false
 }
@@ -125,10 +127,11 @@ fn typ_tag(p: &mut Parser) {
 
 fn typ_field(p: &mut Parser) {
     let c = p.checkpoint();
-    opt_mutability(p);
+    let has_mut = opt_mutability(p);
     if !p.eat(Ident) {
         // TODO: error
     }
+    let typ_params = opt_typ_params(p);
     if !p.eat(Colon) {
         // TODO: error
     }
@@ -201,7 +204,6 @@ fn typ_item(p: &mut Parser) {
                     typ(p);
                     p.finish_at(c, FuncT);
                 }
-
             }
             None => {
                 opt_typ_args(p);
@@ -250,10 +252,10 @@ pub(super) fn typ(p: &mut Parser) {
         typ(p);
         p.finish_at(c, FuncT);
     } else {
-      typ_un(p);
-      if p.eat(Arrow) {
-        typ(p);
-        p.finish_at(c, FuncT);
-      }
+        typ_un(p);
+        if p.eat(Arrow) {
+            typ(p);
+            p.finish_at(c, FuncT);
+        }
     }
 }

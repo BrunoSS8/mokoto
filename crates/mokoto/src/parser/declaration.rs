@@ -1,12 +1,12 @@
-use super::Parser;
-use crate::lexer::SyntaxKind;
 use super::expression;
 use super::pattern;
+use super::Parser;
+use crate::lexer::SyntaxKind;
 
 pub(super) fn decl(p: &mut Parser) {
     match p.peek() {
         SyntaxKind::LetKw => let_decl(p),
-        _ => unreachable!("Unknown decl.")
+        _ => unreachable!("Unknown decl."),
     }
 }
 

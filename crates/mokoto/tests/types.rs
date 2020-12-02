@@ -57,7 +57,6 @@ fn normalize_newlines(src: &mut String) {
     }
 }
 
-
 #[test]
 fn parse_types() {
     use std::fs;

@@ -1,6 +1,6 @@
 use crate::lexer::SyntaxKind;
-use rowan::SmolStr;
 use num_traits::{FromPrimitive, ToPrimitive};
+use rowan::SmolStr;
 
 pub mod ast;
 
