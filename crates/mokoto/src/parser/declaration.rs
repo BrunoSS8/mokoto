@@ -4,7 +4,7 @@ use super::Parser;
 use crate::lexer::SyntaxKind;
 
 pub(super) fn decl(p: &mut Parser) {
-    match p.peek() {
+    match p.current() {
         SyntaxKind::LetKw => let_decl(p),
         _ => unreachable!("Unknown decl."),
     }

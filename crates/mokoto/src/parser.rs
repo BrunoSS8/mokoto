@@ -98,7 +98,7 @@ impl<'a> Parser<'a> {
     }
 
     fn eat(&mut self, kind: SyntaxKind) -> bool {
-        if self.peek() != kind {
+        if self.current() != kind {
             return false;
         }
         self.bump_any();
@@ -114,16 +114,20 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn peek(&mut self) -> SyntaxKind {
+    fn nth_at(&mut self, n: usize, kind: SyntaxKind) -> bool {
+        self.nth(n) == kind
+    }
+
+    fn current(&mut self) -> SyntaxKind {
         self.nth(0)
     }
 
     fn at(&mut self, kind: SyntaxKind) -> bool {
-        self.peek() == kind
+        self.nth_at(0, kind)
     }
 
     fn at_ts(&mut self, kinds: TokenSet) -> bool {
-        kinds.contains(self.peek())
+        kinds.contains(self.current())
     }
 
     fn error(&mut self, msg: &str) {

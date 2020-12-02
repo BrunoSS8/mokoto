@@ -143,7 +143,7 @@ fn typ_obj_or_variant(p: &mut Parser) {
     assert!(p.at(LBrace));
     let c = p.checkpoint();
     p.bump(LBrace);
-    match p.peek() {
+    match p.current() {
         Hash => {
             while p.at(Hash) {
                 typ_tag(p);
@@ -216,7 +216,7 @@ fn typ_item(p: &mut Parser) {
 }
 
 fn typ_nullary(p: &mut Parser) {
-    match p.peek() {
+    match p.current() {
         LParen => paren_or_tuple_typ(p),
         LBracket => array_typ(p),
         Ident => {

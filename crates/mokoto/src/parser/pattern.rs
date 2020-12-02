@@ -2,7 +2,7 @@ use super::Parser;
 use crate::lexer::SyntaxKind;
 
 pub(super) fn pat(p: &mut Parser) {
-    match p.peek() {
+    match p.current() {
         SyntaxKind::Ident => var_pattern(p),
         _ => unreachable!("Unknown pattern."),
     }
