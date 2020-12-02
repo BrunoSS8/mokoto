@@ -165,6 +165,9 @@ pub(crate) enum SyntaxKind {
     #[token("<:")]
     Sub,
 
+    #[token("#")]
+    Hash,
+
     #[token("?")]
     Question,
 
@@ -194,6 +197,7 @@ pub(crate) enum SyntaxKind {
     ArrayT,
     FuncT,
     ObjT,
+    VariantT,
     TupT,
     NamedT,
 
@@ -220,5 +224,8 @@ pub(crate) enum SyntaxKind {
     TypArgs,
     TypParams,
     TypBind,
+    TypTag,
+    TypField,
+    TypAnnot,
     FuncSort,
 }

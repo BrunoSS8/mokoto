@@ -103,6 +103,75 @@ fn paren_or_tuple_typ(p: &mut Parser) {
     p.finish_at(c, TupT)
 }
 
+fn opt_annot(p: &mut Parser) {
+    let c = p.checkpoint();
+    if p.eat(Colon) {
+        typ(p);
+        p.finish_at(c, TypAnnot)
+    }
+}
+
+fn typ_tag(p: &mut Parser) {
+    let c = p.checkpoint();
+    if !p.eat(Hash) {
+        // TODO: error
+    }
+    if !p.eat(Ident) {
+        // TODO: error
+    }
+    opt_annot(p);
+    p.finish_at(c, TypTag);
+}
+
+fn typ_field(p: &mut Parser) {
+    let c = p.checkpoint();
+    opt_mutability(p);
+    if !p.eat(Ident) {
+        // TODO: error
+    }
+    if !p.eat(Colon) {
+        // TODO: error
+    }
+    typ(p);
+    p.finish_at(c, TypField);
+}
+
+fn typ_obj_or_variant(p: &mut Parser) {
+    assert!(p.at(LBrace));
+    let c = p.checkpoint();
+    p.bump(LBrace);
+    match p.peek() {
+        Hash => {
+            while p.at(Hash) {
+                typ_tag(p);
+                p.eat(Comma);
+            }
+            if !p.eat(RBrace) {
+                // TODO: error
+            }
+            p.finish_at(c, VariantT)
+        }
+        Ident | VarKw => {
+            while p.at(Ident) || p.at(VarKw) {
+                typ_field(p);
+                p.eat(Comma);
+            }
+            if !p.eat(RBrace) {
+                // TODO: error
+            }
+            p.finish_at(c, ObjT)
+        }
+        RBrace => {
+            p.bump(RBrace);
+            p.finish_at(c, ObjT)
+        }
+        _ => {
+            // TODO: error
+            unreachable!("Not a valid start to a object or variant")
+        }
+    }
+}
+
 fn typ_bind(p: &mut Parser) {
     let c = p.checkpoint();
     if !p.eat(Ident) {
@@ -154,6 +223,7 @@ fn typ_nullary(p: &mut Parser) {
             opt_typ_args(p);
             p.finish_at(c, PathT)
         }
+        LBrace => typ_obj_or_variant(p),
         // TODO: Error
         _ => unreachable!("Unexpected token in typ_nullary"),
     }
