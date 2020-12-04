@@ -1,22 +1,20 @@
 ---
 source: crates/mokoto/tests/types.rs
 expression: output
-input_file: crates/mokoto/tests/passing/types/Func.mo
 ---
 shared A -> B
 
 ---
-Root@0..13
-  FuncT@0..13
-    FuncSort@0..7
-      SharedKw@0..6 "shared"
-      Space@6..7 " "
-    PathT@7..9
-      Path@7..9
-        Ident@7..8 "A"
-        Space@8..9 " "
-    Arrow@9..11 "->"
-    Space@11..12 " "
-    PathT@12..13
-      Path@12..13
-        Ident@12..13 "B"
+FuncT@0..13
+  FuncSort@0..7
+    SharedKw@0..6 "shared"
+    Space@6..7 " "
+  PathT@7..9
+    Path@7..9
+      Ident@7..8 "A"
+      Space@8..9 " "
+  Arrow@9..11 "->"
+  Space@11..12 " "
+  PathT@12..13
+    Path@12..13
+      Ident@12..13 "B"

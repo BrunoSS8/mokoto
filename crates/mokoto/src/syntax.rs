@@ -6,13 +6,13 @@ pub mod ast;
 pub mod nodes;
 
 #[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
-pub(crate) enum MotokoLanguage {}
+pub enum MotokoLanguage {}
 
-pub(crate) type SyntaxNode = rowan::SyntaxNode<MotokoLanguage>;
-pub(crate) type SyntaxToken = rowan::SyntaxToken<MotokoLanguage>;
-pub(crate) type SyntaxElement = rowan::SyntaxElement<MotokoLanguage>;
-pub(crate) type SyntaxNodeChildren = rowan::SyntaxNodeChildren<MotokoLanguage>;
-pub(crate) type SyntaxElementChildren = rowan::SyntaxElementChildren<MotokoLanguage>;
+pub type SyntaxNode = rowan::SyntaxNode<MotokoLanguage>;
+pub type SyntaxToken = rowan::SyntaxToken<MotokoLanguage>;
+pub type SyntaxElement = rowan::SyntaxElement<MotokoLanguage>;
+pub type SyntaxNodeChildren = rowan::SyntaxNodeChildren<MotokoLanguage>;
+pub type SyntaxElementChildren = rowan::SyntaxElementChildren<MotokoLanguage>;
 
 impl rowan::Language for MotokoLanguage {
     type Kind = SyntaxKind;

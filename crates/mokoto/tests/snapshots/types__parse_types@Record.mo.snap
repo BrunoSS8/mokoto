@@ -5,17 +5,16 @@ expression: output
 { x : Text }
 
 ---
-Root@0..12
-  ObjT@0..12
-    LBrace@0..1 "{"
-    Space@1..2 " "
-    TypField@2..11
-      Ident@2..3 "x"
-      Space@3..4 " "
-      Colon@4..5 ":"
-      Space@5..6 " "
-      PathT@6..11
-        Path@6..11
-          Ident@6..10 "Text"
-          Space@10..11 " "
-    RBrace@11..12 "}"
+ObjT@0..12
+  LBrace@0..1 "{"
+  Space@1..2 " "
+  TypField@2..11
+    Ident@2..3 "x"
+    Space@3..4 " "
+    Colon@4..5 ":"
+    Space@5..6 " "
+    PathT@6..11
+      Path@6..11
+        Ident@6..10 "Text"
+        Space@10..11 " "
+  RBrace@11..12 "}"

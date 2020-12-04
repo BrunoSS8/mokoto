@@ -96,7 +96,7 @@ impl<'a> Iterator for Lexer<'a> {
 
 #[derive(Debug, Copy, Clone, PartialEq, Logos, FromPrimitive, ToPrimitive)]
 #[repr(u16)]
-pub(crate) enum SyntaxKind {
+pub enum SyntaxKind {
     #[regex(" +")]
     Space,
 

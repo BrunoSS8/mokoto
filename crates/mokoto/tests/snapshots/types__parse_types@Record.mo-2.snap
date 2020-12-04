@@ -5,20 +5,19 @@ expression: output
 { var x : Text }
 
 ---
-Root@0..16
-  ObjT@0..16
-    LBrace@0..1 "{"
-    Space@1..2 " "
-    TypField@2..15
-      MutModifier@2..6
-        VarKw@2..5 "var"
-        Space@5..6 " "
-      Ident@6..7 "x"
-      Space@7..8 " "
-      Colon@8..9 ":"
-      Space@9..10 " "
-      PathT@10..15
-        Path@10..15
-          Ident@10..14 "Text"
-          Space@14..15 " "
-    RBrace@15..16 "}"
+ObjT@0..16
+  LBrace@0..1 "{"
+  Space@1..2 " "
+  TypField@2..15
+    MutModifier@2..6
+      VarKw@2..5 "var"
+      Space@5..6 " "
+    Ident@6..7 "x"
+    Space@7..8 " "
+    Colon@8..9 ":"
+    Space@9..10 " "
+    PathT@10..15
+      Path@10..15
+        Ident@10..14 "Text"
+        Space@14..15 " "
+  RBrace@15..16 "}"

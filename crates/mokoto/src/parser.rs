@@ -42,11 +42,7 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse_typ(mut self) -> Parse {
-        self.start_node(SyntaxKind::Root);
-
         types::typ(&mut self);
-
-        self.finish_node();
 
         Parse {
             green_node: self.builder.finish(),
@@ -141,6 +137,10 @@ pub struct Parse {
 }
 
 impl Parse {
+    pub fn syntax(&self) -> SyntaxNode {
+        SyntaxNode::new_root(self.green_node.clone())
+    }
+
     pub fn debug_tree(&self) -> String {
         let syntax_node = SyntaxNode::new_root(self.green_node.clone());
         let formatted = format!("{:#?}", syntax_node);

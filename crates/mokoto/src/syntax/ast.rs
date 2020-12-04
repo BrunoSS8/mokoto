@@ -5,7 +5,7 @@ use std::marker::PhantomData;
 /// conversion itself has zero runtime cost: ast and syntax nodes have exactly
 /// the same representation: a pointer to the tree root and a pointer to the
 /// node itself.
-pub(crate) trait AstNode {
+pub trait AstNode {
     fn can_cast(kind: SyntaxKind) -> bool
     where
         Self: Sized;
@@ -18,7 +18,7 @@ pub(crate) trait AstNode {
 }
 
 /// Like `AstNode`, but wraps tokens rather than interior nodes.
-pub(crate) trait AstToken {
+pub trait AstToken {
     fn can_cast(token: SyntaxKind) -> bool
     where
         Self: Sized;
@@ -36,7 +36,7 @@ pub(crate) trait AstToken {
 
 /// An iterator over `SyntaxNode` children of a particular AST type.
 #[derive(Debug, Clone)]
-pub(crate) struct AstChildren<N> {
+pub struct AstChildren<N> {
     inner: SyntaxNodeChildren,
     ph: PhantomData<N>,
 }
@@ -57,18 +57,18 @@ impl<N: AstNode> Iterator for AstChildren<N> {
     }
 }
 
-mod support {
+pub(crate) mod support {
     use super::{AstChildren, AstNode, SyntaxKind, SyntaxNode, SyntaxToken};
 
-    pub(super) fn child<N: AstNode>(parent: &SyntaxNode) -> Option<N> {
+    pub(crate) fn child<N: AstNode>(parent: &SyntaxNode) -> Option<N> {
         parent.children().find_map(N::cast)
     }
 
-    pub(super) fn children<N: AstNode>(parent: &SyntaxNode) -> AstChildren<N> {
+    pub(crate) fn children<N: AstNode>(parent: &SyntaxNode) -> AstChildren<N> {
         AstChildren::new(parent)
     }
 
-    pub(super) fn token(parent: &SyntaxNode, kind: SyntaxKind) -> Option<SyntaxToken> {
+    pub(crate) fn token(parent: &SyntaxNode, kind: SyntaxKind) -> Option<SyntaxToken> {
         parent
             .children_with_tokens()
             .filter_map(|it| it.into_token())

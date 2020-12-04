@@ -1,83 +1,81 @@
 ---
 source: crates/mokoto/tests/types.rs
 expression: output
-input_file: crates/mokoto/tests/passing/types/Func.mo
 ---
 shared query <K <: Int, V> (a : A) -> (b : B, (c : C, d : D))
 
 ---
-Root@0..61
-  FuncT@0..61
-    FuncSort@0..13
-      SharedKw@0..6 "shared"
-      Space@6..7 " "
-      QueryKw@7..12 "query"
-      Space@12..13 " "
-    TypParams@13..27
-      Lt@13..14 "<"
-      TypBind@14..22
-        Ident@14..15 "K"
-        Space@15..16 " "
-        Sub@16..18 "<:"
-        Space@18..19 " "
-        PathT@19..22
-          Path@19..22
-            Ident@19..22 "Int"
-      Comma@22..23 ","
-      Space@23..24 " "
-      TypBind@24..25
-        Ident@24..25 "V"
-      Gt@25..26 ">"
-      Space@26..27 " "
-    ParenT@27..35
-      LParen@27..28 "("
-      NamedT@28..33
-        Name@28..30
-          Ident@28..29 "a"
-          Space@29..30 " "
-        Colon@30..31 ":"
-        Space@31..32 " "
-        PathT@32..33
-          Path@32..33
-            Ident@32..33 "A"
-      RParen@33..34 ")"
-      Space@34..35 " "
-    Arrow@35..37 "->"
-    Space@37..38 " "
-    TupT@38..61
-      LParen@38..39 "("
-      NamedT@39..44
-        Name@39..41
-          Ident@39..40 "b"
-          Space@40..41 " "
-        Colon@41..42 ":"
-        Space@42..43 " "
-        PathT@43..44
-          Path@43..44
-            Ident@43..44 "B"
-      Comma@44..45 ","
-      Space@45..46 " "
-      TupT@46..60
-        LParen@46..47 "("
-        NamedT@47..52
-          Name@47..49
-            Ident@47..48 "c"
-            Space@48..49 " "
-          Colon@49..50 ":"
-          Space@50..51 " "
-          PathT@51..52
-            Path@51..52
-              Ident@51..52 "C"
-        Comma@52..53 ","
-        Space@53..54 " "
-        NamedT@54..59
-          Name@54..56
-            Ident@54..55 "d"
-            Space@55..56 " "
-          Colon@56..57 ":"
-          Space@57..58 " "
-          PathT@58..59
-            Path@58..59
-              Ident@58..59 "D"
-        RParen@59..60 ")"
-      RParen@60..61 ")"
+FuncT@0..61
+  FuncSort@0..13
+    SharedKw@0..6 "shared"
+    Space@6..7 " "
+    QueryKw@7..12 "query"
+    Space@12..13 " "
+  TypParams@13..27
+    Lt@13..14 "<"
+    TypBind@14..22
+      Ident@14..15 "K"
+      Space@15..16 " "
+      Sub@16..18 "<:"
+      Space@18..19 " "
+      PathT@19..22
+        Path@19..22
+          Ident@19..22 "Int"
+    Comma@22..23 ","
+    Space@23..24 " "
+    TypBind@24..25
+      Ident@24..25 "V"
+    Gt@25..26 ">"
+    Space@26..27 " "
+  ParenT@27..35
+    LParen@27..28 "("
+    NamedT@28..33
+      Name@28..30
+        Ident@28..29 "a"
+        Space@29..30 " "
+      Colon@30..31 ":"
+      Space@31..32 " "
+      PathT@32..33
+        Path@32..33
+          Ident@32..33 "A"
+    RParen@33..34 ")"
+    Space@34..35 " "
+  Arrow@35..37 "->"
+  Space@37..38 " "
+  TupT@38..61
+    LParen@38..39 "("
+    NamedT@39..44
+      Name@39..41
+        Ident@39..40 "b"
+        Space@40..41 " "
+      Colon@41..42 ":"
+      Space@42..43 " "
+      PathT@43..44
+        Path@43..44
+          Ident@43..44 "B"
+    Comma@44..45 ","
+    Space@45..46 " "
+    TupT@46..60
+      LParen@46..47 "("
+      NamedT@47..52
+        Name@47..49
+          Ident@47..48 "c"
+          Space@48..49 " "
+        Colon@49..50 ":"
+        Space@50..51 " "
+        PathT@51..52
+          Path@51..52
+            Ident@51..52 "C"
+      Comma@52..53 ","
+      Space@53..54 " "
+      NamedT@54..59
+        Name@54..56
+          Ident@54..55 "d"
+          Space@55..56 " "
+        Colon@56..57 ":"
+        Space@57..58 " "
+        PathT@58..59
+          Path@58..59
+            Ident@58..59 "D"
+      RParen@59..60 ")"
+    RParen@60..61 ")"

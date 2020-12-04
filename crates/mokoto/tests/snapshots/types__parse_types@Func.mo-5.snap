@@ -1,59 +1,57 @@
 ---
 source: crates/mokoto/tests/types.rs
 expression: output
-input_file: crates/mokoto/tests/passing/types/Func.mo
 ---
 (a : A, b : B) -> (c : C, d : D)
 
 ---
-Root@0..32
-  FuncT@0..32
-    TupT@0..15
-      LParen@0..1 "("
-      NamedT@1..6
-        Name@1..3
-          Ident@1..2 "a"
-          Space@2..3 " "
-        Colon@3..4 ":"
-        Space@4..5 " "
-        PathT@5..6
-          Path@5..6
-            Ident@5..6 "A"
-      Comma@6..7 ","
-      Space@7..8 " "
-      NamedT@8..13
-        Name@8..10
-          Ident@8..9 "b"
-          Space@9..10 " "
-        Colon@10..11 ":"
-        Space@11..12 " "
-        PathT@12..13
-          Path@12..13
-            Ident@12..13 "B"
-      RParen@13..14 ")"
-      Space@14..15 " "
-    Arrow@15..17 "->"
-    Space@17..18 " "
-    TupT@18..32
-      LParen@18..19 "("
-      NamedT@19..24
-        Name@19..21
-          Ident@19..20 "c"
-          Space@20..21 " "
-        Colon@21..22 ":"
-        Space@22..23 " "
-        PathT@23..24
-          Path@23..24
-            Ident@23..24 "C"
-      Comma@24..25 ","
-      Space@25..26 " "
-      NamedT@26..31
-        Name@26..28
-          Ident@26..27 "d"
-          Space@27..28 " "
-        Colon@28..29 ":"
-        Space@29..30 " "
-        PathT@30..31
-          Path@30..31
-            Ident@30..31 "D"
-      RParen@31..32 ")"
+FuncT@0..32
+  TupT@0..15
+    LParen@0..1 "("
+    NamedT@1..6
+      Name@1..3
+        Ident@1..2 "a"
+        Space@2..3 " "
+      Colon@3..4 ":"
+      Space@4..5 " "
+      PathT@5..6
+        Path@5..6
+          Ident@5..6 "A"
+    Comma@6..7 ","
+    Space@7..8 " "
+    NamedT@8..13
+      Name@8..10
+        Ident@8..9 "b"
+        Space@9..10 " "
+      Colon@10..11 ":"
+      Space@11..12 " "
+      PathT@12..13
+        Path@12..13
+          Ident@12..13 "B"
+    RParen@13..14 ")"
+    Space@14..15 " "
+  Arrow@15..17 "->"
+  Space@17..18 " "
+  TupT@18..32
+    LParen@18..19 "("
+    NamedT@19..24
+      Name@19..21
+        Ident@19..20 "c"
+        Space@20..21 " "
+      Colon@21..22 ":"
+      Space@22..23 " "
+      PathT@23..24
+        Path@23..24
+          Ident@23..24 "C"
+    Comma@24..25 ","
+    Space@25..26 " "
+    NamedT@26..31
+      Name@26..28
+        Ident@26..27 "d"
+        Space@27..28 " "
+      Colon@28..29 ":"
+      Space@29..30 " "
+      PathT@30..31
+        Path@30..31
+          Ident@30..31 "D"
+    RParen@31..32 ")"
