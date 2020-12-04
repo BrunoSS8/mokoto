@@ -117,69 +117,57 @@ fn typ_tag(p: &mut Parser) {
     p.finish_at(c, TypTag);
 }
 
-// typ_field :
-//   | mut=var_opt x=id COLON t=typ
-//     { {id = x; typ = t; mut} @@ at $sloc }
-//   | x=id tps=typ_params_opt t1=typ_nullary COLON t2=typ
-//     { let t = funcT(Type.Local @@ no_region, tps, t1, t2)
-//               @! span x.at t2.at in
-//       {id = x; typ = t; mut = Const @@ no_region} @@ at $sloc }
 fn typ_field(p: &mut Parser) {
     let c = p.checkpoint();
-    if opt_mutability(p) {
+    if opt_mutability(p) || (p.at(Ident) && p.nth_at(1, Colon)) {
         p.bump(Ident);
         p.bump(Colon);
         typ(p);
         p.finish_at(c, TypField);
     } else {
         p.bump(Ident);
-        if opt_typ_params(p) || !p.at(Colon) {
-            typ_nullary(p);
-            p.bump(Colon);
-            typ(p);
-            p.finish_at(c, TypFieldFunc);
-        } else {
-            p.bump(Colon);
-            typ(p);
-            p.finish_at(c, TypField);
-        }
+        opt_typ_params(p);
+        typ_nullary(p);
+        p.bump(Colon);
+        typ(p);
+        p.finish_at(c, TypFieldFunc);
     }
 }
 
-fn typ_obj_or_variant(p: &mut Parser) {
-    assert!(p.at(LBrace));
-    let c = p.checkpoint();
-    p.bump(LBrace);
-    match p.current() {
-        Hash => {
-            while p.at(Hash) {
-                typ_tag(p);
-                p.eat(Comma);
-            }
-            if !p.eat(RBrace) {
-                // TODO: error
-            }
-            p.finish_at(c, VariantT)
-        }
-        Ident | VarKw => {
-            while p.at(Ident) || p.at(VarKw) {
-                typ_field(p);
-                p.eat(Comma);
-            }
-            if !p.eat(RBrace) {
-                // TODO: error
-            }
-            p.finish_at(c, ObjT)
-        }
-        RBrace => {
-            p.bump(RBrace);
-            p.finish_at(c, ObjT)
-        }
-        _ => {
-            // TODO: error
-            unreachable!("Not a valid start to a object or variant")
-        }
+/// Does not create its own Node (so the level above can include object sorts)
+fn typ_obj(p: &mut Parser) {
+    if !p.eat(LBrace) {
+        // TODO Error
+        unreachable!("typ_obj")
     }
+    while p.at(Ident) || p.at(VarKw) {
+        typ_field(p);
+        p.eat(Comma);
+    }
+    if !p.eat(RBrace) {
+        // TODO: error
+    }
+}
+
+fn typ_variant(p: &mut Parser) {
+    let c = p.checkpoint();
+    if !p.eat(LBrace) {
+        // TODO Error
+        unreachable!("typ_variant")
+    }
+    if p.at(Hash) && p.nth_at(1, RBrace) {
+        p.bump(Hash);
+        p.bump(RBrace);
+        return p.finish_at(c, VariantT);
+    }
+    while p.at(Hash) {
+        typ_tag(p);
+        p.eat(Comma);
+    }
+    if !p.eat(RBrace) {
+        // TODO: error
+    }
+    p.finish_at(c, VariantT)
 }
 
 fn typ_bind(p: &mut Parser) {
@@ -222,7 +210,15 @@ fn typ_nullary(p: &mut Parser) {
             opt_typ_args(p);
             p.finish_at(c, PathT)
         }
-        LBrace => typ_obj_or_variant(p),
+        LBrace => {
+            if p.nth_at(1, Hash) {
+                typ_variant(p)
+            } else {
+                let c = p.checkpoint();
+                typ_obj(p);
+                p.finish_at(c, ObjT)
+            }
+        }
         // TODO: Error
         _ => unreachable!("Unexpected token in typ_nullary"),
     }
@@ -238,6 +234,36 @@ fn typ_un(p: &mut Parser) {
     }
 }
 
+fn typ_pre(p: &mut Parser) {
+    match p.current() {
+        AsyncKw => {
+            let c = p.checkpoint();
+            p.bump(AsyncKw);
+            typ_pre(p);
+            p.finish_at(c, AsyncT)
+        }
+        // TODO: Only allow in privileged mode
+        PrimKw => {
+            let c = p.checkpoint();
+            p.bump(PrimKw);
+            p.bump(Ident);
+            p.finish_at(c, PrimT)
+        }
+        ObjectKw | ActorKw | ModuleKw => {
+            let c = p.checkpoint();
+            p.bump_any();
+            p.finish_at(c, ObjSort);
+            typ_obj(p);
+            p.finish_at(c, ObjT)
+        }
+        _ => typ_un(p),
+    }
+}
+
+fn starts_pre(kind: SyntaxKind) -> bool {
+    matches!(kind, AsyncKw | ObjectKw | ActorKw | ModuleKw | PrimKw)
+}
+
 pub(super) fn typ(p: &mut Parser) {
     let c = p.checkpoint();
     let fs = opt_func_sort(p);
@@ -248,6 +274,8 @@ pub(super) fn typ(p: &mut Parser) {
         p.bump(Arrow);
         typ(p);
         p.finish_at(c, FuncT);
+    } else if starts_pre(p.current()) {
+        typ_pre(p)
     } else {
         typ_un(p);
         if p.eat(Arrow) {

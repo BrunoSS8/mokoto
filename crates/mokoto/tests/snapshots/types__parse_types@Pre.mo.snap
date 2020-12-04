@@ -1,0 +1,14 @@
+---
+source: crates/mokoto/tests/types.rs
+expression: output
+---
+async Text
+
+---
+Root@0..10
+  AsyncT@0..10
+    AsyncKw@0..5 "async"
+    Space@5..6 " "
+    PathT@6..10
+      Path@6..10
+        Ident@6..10 "Text"

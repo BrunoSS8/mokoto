@@ -133,6 +133,24 @@ pub(crate) enum SyntaxKind {
     #[token("query")]
     QueryKw,
 
+    #[token("async")]
+    AsyncKw,
+
+    #[token("object")]
+    ObjectKw,
+
+    #[token("class")]
+    ClassKw,
+
+    #[token("actor")]
+    ActorKw,
+
+    #[token("module")]
+    ModuleKw,
+
+    #[token("prim")]
+    PrimKw,
+
     #[regex("[A-Za-z][A-Za-z0-9]*")]
     Ident,
 
@@ -219,6 +237,7 @@ pub(crate) enum SyntaxKind {
     VariantT,
     TupT,
     NamedT,
+    PrimT,
 
     // Expressions
     Parenthesize, // a parenthesized expression
@@ -248,4 +267,5 @@ pub(crate) enum SyntaxKind {
     TypFieldFunc,
     TypAnnot,
     FuncSort,
+    ObjSort,
 }
