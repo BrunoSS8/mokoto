@@ -3,6 +3,7 @@ use num_traits::{FromPrimitive, ToPrimitive};
 use rowan::SmolStr;
 
 pub mod ast;
+pub mod nodes;
 
 #[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub(crate) enum MotokoLanguage {}
