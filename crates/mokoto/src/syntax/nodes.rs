@@ -1,7 +1,7 @@
 use crate::lexer::SyntaxKind::{self, *};
 use crate::syntax::SyntaxNode;
 
-use super::ast::AstNode;
+use super::ast::{support, AstNode};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct OptionalType {
@@ -24,9 +24,21 @@ impl AstNode for OptionalType {
     }
 }
 
+impl OptionalType {
+    fn typ(&self) -> Option<Type> {
+       support::child(&self.syntax)
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ParenType {
     pub(crate) syntax: SyntaxNode,
+}
+
+impl ParenType {
+    fn typ(&self) -> Option<Type> {
+       support::child(&self.syntax)
+    }
 }
 
 impl AstNode for ParenType {

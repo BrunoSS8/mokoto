@@ -1,4 +1,5 @@
-use mokoto::parser::Parser;
+use mokoto::parser::{Parse, Parser};
+use mokoto::syntax::{ast::AstNode, nodes::Type};
 use std::io::{self, Write};
 
 fn main() -> io::Result<()> {
@@ -13,8 +14,12 @@ fn main() -> io::Result<()> {
 
         stdin.read_line(&mut input)?;
 
-        let parse = Parser::new(&input).parse_typ();
+        let parse : Parse = Parser::new(&input).parse_typ();
         println!("{}", parse.debug_tree());
+
+        let ty: Type = AstNode::cast(parse.syntax()).unwrap();
+
+        println!("{:?}", ty);
 
         input.clear();
     }
