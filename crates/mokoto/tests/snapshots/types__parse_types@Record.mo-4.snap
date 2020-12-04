@@ -1,0 +1,35 @@
+---
+source: crates/mokoto/tests/types.rs
+expression: output
+---
+{ y<A>List<A> : Text }
+
+---
+Root@0..22
+  ObjT@0..22
+    LBrace@0..1 "{"
+    Space@1..2 " "
+    TypFieldFunc@2..21
+      Ident@2..3 "y"
+      TypParams@3..6
+        Lt@3..4 "<"
+        TypBind@4..5
+          Ident@4..5 "A"
+        Gt@5..6 ">"
+      PathT@6..14
+        Path@6..10
+          Ident@6..10 "List"
+        TypArgs@10..14
+          Lt@10..11 "<"
+          PathT@11..12
+            Path@11..12
+              Ident@11..12 "A"
+          Gt@12..13 ">"
+          Space@13..14 " "
+      Colon@14..15 ":"
+      Space@15..16 " "
+      PathT@16..21
+        Path@16..21
+          Ident@16..20 "Text"
+          Space@20..21 " "
+    RBrace@21..22 "}"

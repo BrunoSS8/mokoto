@@ -105,24 +105,24 @@ impl<'a> Parser<'a> {
         true
     }
 
-    fn nth(&mut self, n: usize) -> SyntaxKind {
+    fn nth(&self, n: usize) -> SyntaxKind {
         let len = self.tokens.len();
         if n >= len {
             SyntaxKind::Eof
         } else {
-            self.tokens[n - len].1 .0
+            self.tokens[len - n - 1].1 .0
         }
     }
 
-    fn nth_at(&mut self, n: usize, kind: SyntaxKind) -> bool {
+    fn nth_at(&self, n: usize, kind: SyntaxKind) -> bool {
         self.nth(n) == kind
     }
 
-    fn current(&mut self) -> SyntaxKind {
+    fn current(&self) -> SyntaxKind {
         self.nth(0)
     }
 
-    fn at(&mut self, kind: SyntaxKind) -> bool {
+    fn at(&self, kind: SyntaxKind) -> bool {
         self.nth_at(0, kind)
     }
 

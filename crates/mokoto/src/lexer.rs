@@ -245,6 +245,7 @@ pub(crate) enum SyntaxKind {
     TypBind,
     TypTag,
     TypField,
+    TypFieldFunc,
     TypAnnot,
     FuncSort,
 }

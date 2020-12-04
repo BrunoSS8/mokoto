@@ -41,23 +41,15 @@ fn opt_typ_args(p: &mut Parser) -> bool {
     false
 }
 
-fn path_or_name(p: &mut Parser) -> Option<Checkpoint> {
+fn path(p: &mut Parser) {
     assert!(p.at(Ident));
     let c = p.checkpoint();
     p.bump(Ident);
-    if !p.at(Dot) {
-        return Some(c);
-    }
     while p.eat(Dot) {
         // TODO: Error
         p.bump(Ident);
     }
-    p.finish_at(c, Path);
-    None
-}
-
-fn path(p: &mut Parser) {
-    path_or_name(p).map(|c| p.finish_at(c, Path));
+    p.finish_at(c, Path)
 }
 
 fn array_typ(p: &mut Parser) {
@@ -125,18 +117,33 @@ fn typ_tag(p: &mut Parser) {
     p.finish_at(c, TypTag);
 }
 
+// typ_field :
+//   | mut=var_opt x=id COLON t=typ
+//     { {id = x; typ = t; mut} @@ at $sloc }
+//   | x=id tps=typ_params_opt t1=typ_nullary COLON t2=typ
+//     { let t = funcT(Type.Local @@ no_region, tps, t1, t2)
+//               @! span x.at t2.at in
+//       {id = x; typ = t; mut = Const @@ no_region} @@ at $sloc }
 fn typ_field(p: &mut Parser) {
     let c = p.checkpoint();
-    let has_mut = opt_mutability(p);
-    if !p.eat(Ident) {
-        // TODO: error
+    if opt_mutability(p) {
+        p.bump(Ident);
+        p.bump(Colon);
+        typ(p);
+        p.finish_at(c, TypField);
+    } else {
+        p.bump(Ident);
+        if opt_typ_params(p) || !p.at(Colon) {
+            typ_nullary(p);
+            p.bump(Colon);
+            typ(p);
+            p.finish_at(c, TypFieldFunc);
+        } else {
+            p.bump(Colon);
+            typ(p);
+            p.finish_at(c, TypField);
+        }
     }
-    let typ_params = opt_typ_params(p);
-    if !p.eat(Colon) {
-        // TODO: error
-    }
-    typ(p);
-    p.finish_at(c, TypField);
 }
 
 fn typ_obj_or_variant(p: &mut Parser) {
@@ -188,28 +195,18 @@ fn typ_bind(p: &mut Parser) {
 
 fn typ_item(p: &mut Parser) {
     let c = p.checkpoint();
-    if p.at(Ident) {
-        match path_or_name(p) {
-            Some(c_label) if p.at(Colon) => {
-                p.finish_at(c_label, Name);
-                p.bump(Colon);
-                typ(p);
-                p.finish_at(c, NamedT);
-            }
-            Some(c_path) => {
-                p.finish_at(c_path, Path);
-                opt_typ_args(p);
-                p.finish_at(c, PathT);
-                if p.eat(Arrow) {
-                    typ(p);
-                    p.finish_at(c, FuncT);
-                }
-            }
-            None => {
-                opt_typ_args(p);
-                p.finish_at(c, PathT);
-            }
-        };
+    if p.at(Ident) && p.nth_at(1, Colon) {
+        p.bump(Ident);
+        p.finish_at(c, Name);
+        p.bump(Colon);
+        typ(p);
+        p.finish_at(c, NamedT);
+    } else if p.at(Ident) {
+        typ_nullary(p);
+        if p.eat(Arrow) {
+            typ(p);
+            p.finish_at(c, FuncT);
+        }
     } else {
         typ(p);
     }
