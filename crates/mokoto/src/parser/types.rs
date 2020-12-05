@@ -191,8 +191,12 @@ fn typ_item(p: &mut Parser) {
         p.finish_at(c, NamedT);
     } else if p.at(Ident) {
         typ_nullary(p);
-        if p.eat(Arrow) {
+        if p.at(Arrow) {
+            p.finish_at(c, FuncArg);
+            p.bump(Arrow);
+            let c1 = p.checkpoint();
             typ(p);
+            p.finish_at(c1, FuncResult);
             p.finish_at(c, FuncT);
         }
     } else {
@@ -270,16 +274,24 @@ pub(super) fn typ(p: &mut Parser) {
     let tp = opt_typ_params(p);
     if fs || tp {
         typ_un(p);
+        p.finish_at(c, FuncArg);
         // TODO: Error
         p.bump(Arrow);
+        let c1 = p.checkpoint();
         typ(p);
+        p.finish_at(c1, FuncResult);
         p.finish_at(c, FuncT);
     } else if starts_pre(p.current()) {
         typ_pre(p)
     } else {
         typ_un(p);
-        if p.eat(Arrow) {
+        if p.at(Arrow) {
+            p.finish_at(c, FuncArg);
+            // TODO: Error
+            p.bump(Arrow);
+            let c1 = p.checkpoint();
             typ(p);
+            p.finish_at(c1, FuncResult);
             p.finish_at(c, FuncT);
         }
     }

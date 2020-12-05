@@ -266,6 +266,8 @@ pub enum SyntaxKind {
     TypField,
     TypFieldFunc,
     TypAnnot,
+    FuncArg,
+    FuncResult,
     FuncSort,
     ObjSort,
 }

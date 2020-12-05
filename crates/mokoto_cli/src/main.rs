@@ -14,12 +14,19 @@ fn main() -> io::Result<()> {
 
         stdin.read_line(&mut input)?;
 
-        let parse : Parse = Parser::new(&input).parse_typ();
+        let parse: Parse = Parser::new(&input).parse_typ();
         println!("{}", parse.debug_tree());
 
         let ty: Type = AstNode::cast(parse.syntax()).unwrap();
-
-        println!("{:?}", ty);
+        match ty {
+            Type::PathType(path) => {
+                println!("{:?}<{:?}>", path.path().segments(), path.type_args());
+            }
+            Type::FuncType(func) => {
+                println!("{:?} -> {:?}>", func.arg_type(), func.result_type());
+            }
+            ty => println!("{:?}", ty),
+        }
 
         input.clear();
     }

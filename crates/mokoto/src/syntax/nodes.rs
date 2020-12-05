@@ -27,8 +27,8 @@ impl AstNode for OptionalType {
 }
 
 impl OptionalType {
-    fn typ(&self) -> Option<Type> {
-       support::child(&self.syntax)
+    pub fn typ(&self) -> Option<Type> {
+        support::child(&self.syntax)
     }
 }
 
@@ -38,8 +38,8 @@ pub struct ParenType {
 }
 
 impl ParenType {
-    fn typ(&self) -> Option<Type> {
-       support::child(&self.syntax)
+    pub fn typ(&self) -> Option<Type> {
+        support::child(&self.syntax)
     }
 }
 
@@ -209,6 +209,27 @@ impl AstNode for FuncType {
     }
     fn syntax(&self) -> &SyntaxNode {
         &self.syntax
+    }
+}
+
+impl FuncType {
+    pub fn arg_type(&self) -> Option<Type> {
+        self.syntax.children().find_map(|c| {
+            if c.kind() == FuncArg {
+                support::child(&c)
+            } else {
+                None
+            }
+        })
+    }
+    pub fn result_type(&self) -> Option<Type> {
+        self.syntax.children().find_map(|c| {
+            if c.kind() == FuncResult {
+                support::child(&c)
+            } else {
+                None
+            }
+        })
     }
 }
 
