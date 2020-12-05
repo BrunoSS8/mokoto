@@ -1,3 +1,5 @@
+use rowan::SmolStr;
+
 use crate::lexer::SyntaxKind::{self, *};
 use crate::syntax::SyntaxNode;
 
@@ -96,6 +98,54 @@ impl AstNode for PathType {
     }
     fn syntax(&self) -> &SyntaxNode {
         &self.syntax
+    }
+}
+
+impl PathType {
+    pub fn path(&self) -> Path {
+        support::child(&self.syntax).unwrap()
+    }
+
+    pub fn type_args(&self) -> Option<Vec<Type>> {
+        let type_args = self.syntax.children().find(|n| n.kind() == TypArgs)?;
+        let tys = support::children(&type_args);
+        Some(tys.collect())
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Path {
+    pub(crate) syntax: SyntaxNode,
+}
+
+impl AstNode for Path {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == SyntaxKind::Path
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+
+impl Path {
+    pub fn segments(&self) -> Vec<SmolStr> {
+        let idents = self.syntax.children_with_tokens().filter_map(|n| {
+            n.as_token().and_then(|t| {
+                if t.kind() == Ident {
+                    Some(t.text().clone())
+                } else {
+                    None
+                }
+            })
+        });
+        idents.collect()
     }
 }
 
