@@ -1,33 +1,36 @@
 ---
 source: crates/mokoto/tests/types.rs
 expression: output
+input_file: crates/mokoto/tests/passing/types/Func.mo
 ---
 <K <: Int, V> A -> B
 
 ---
 FuncT@0..20
-  TypParams@0..14
-    Lt@0..1 "<"
-    TypBind@1..9
-      Ident@1..2 "K"
-      Space@2..3 " "
-      Sub@3..5 "<:"
-      Space@5..6 " "
-      PathT@6..9
-        Path@6..9
-          Ident@6..9 "Int"
-    Comma@9..10 ","
-    Space@10..11 " "
-    TypBind@11..12
-      Ident@11..12 "V"
-    Gt@12..13 ">"
-    Space@13..14 " "
-  PathT@14..16
-    Path@14..16
-      Ident@14..15 "A"
-      Space@15..16 " "
+  FuncArg@0..16
+    TypParams@0..14
+      Lt@0..1 "<"
+      TypBind@1..9
+        Ident@1..2 "K"
+        Space@2..3 " "
+        Sub@3..5 "<:"
+        Space@5..6 " "
+        PathT@6..9
+          Path@6..9
+            Ident@6..9 "Int"
+      Comma@9..10 ","
+      Space@10..11 " "
+      TypBind@11..12
+        Ident@11..12 "V"
+      Gt@12..13 ">"
+      Space@13..14 " "
+    PathT@14..16
+      Path@14..16
+        Ident@14..15 "A"
+        Space@15..16 " "
   Arrow@16..18 "->"
   Space@18..19 " "
-  PathT@19..20
-    Path@19..20
-      Ident@19..20 "B"
+  FuncResult@19..20
+    PathT@19..20
+      Path@19..20
+        Ident@19..20 "B"
