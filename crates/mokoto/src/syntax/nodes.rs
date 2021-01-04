@@ -4,6 +4,7 @@ use crate::lexer::SyntaxKind::{self, *};
 use crate::syntax::SyntaxNode;
 
 use super::ast::{support, AstNode};
+use crate::syntax::ast::AstChildren;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct OptionalType {
@@ -167,6 +168,12 @@ impl AstNode for TupleType {
     }
     fn syntax(&self) -> &SyntaxNode {
         &self.syntax
+    }
+}
+
+impl TupleType {
+    fn fields(&self) -> AstChildren<Type> {
+        support::children(&self.syntax())
     }
 }
 

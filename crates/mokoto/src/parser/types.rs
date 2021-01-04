@@ -264,9 +264,7 @@ fn typ_pre(p: &mut Parser) {
     }
 }
 
-fn starts_pre(kind: SyntaxKind) -> bool {
-    matches!(kind, AsyncKw | ObjectKw | ActorKw | ModuleKw | PrimKw)
-}
+const STARTS_PRE: TokenSet = TokenSet::new(&[AsyncKw, ObjectKw, ActorKw, ModuleKw, PrimKw]);
 
 pub(super) fn typ(p: &mut Parser) {
     let c = p.checkpoint();
@@ -281,7 +279,7 @@ pub(super) fn typ(p: &mut Parser) {
         typ(p);
         p.finish_at(c1, FuncResult);
         p.finish_at(c, FuncT);
-    } else if starts_pre(p.current()) {
+    } else if STARTS_PRE.contains(p.current()) {
         typ_pre(p)
     } else {
         typ_un(p);
