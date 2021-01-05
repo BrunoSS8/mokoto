@@ -2,7 +2,7 @@ use super::*;
 
 fn opt_mutability(p: &mut Parser) -> bool {
     let c = p.checkpoint();
-    if p.eat(VarKw) {
+    if p.eat(VAR_KW) {
         p.finish_at(c, MutModifier);
         return true;
     }
@@ -11,15 +11,15 @@ fn opt_mutability(p: &mut Parser) -> bool {
 
 fn opt_typ_params(p: &mut Parser) -> bool {
     let c = p.checkpoint();
-    if p.eat(Lt) {
+    if p.eat(L_ANGLE) {
         typ_bind(p);
-        while p.eat(Comma) {
+        while p.eat(COMMA) {
             typ_bind(p);
         }
-        if !p.eat(Gt) {
+        if !p.eat(R_ANGLE) {
             // TODO Error
         }
-        p.finish_at(c, TypParams);
+        p.finish_at(c, TYPE_PARAMS);
         return true;
     }
     false
@@ -27,49 +27,49 @@ fn opt_typ_params(p: &mut Parser) -> bool {
 
 fn opt_typ_args(p: &mut Parser) -> bool {
     let c = p.checkpoint();
-    if p.eat(Lt) {
+    if p.eat(L_ANGLE) {
         typ(p);
-        while p.eat(Comma) {
+        while p.eat(COMMA) {
             typ(p);
         }
-        if !p.eat(Gt) {
+        if !p.eat(R_ANGLE) {
             // TODO Error
         }
-        p.finish_at(c, TypArgs);
+        p.finish_at(c, TYPE_ARGS);
         return true;
     }
     false
 }
 
 fn path(p: &mut Parser) {
-    assert!(p.at(Ident));
+    assert!(p.at(IDENT));
     let c = p.checkpoint();
-    p.bump(Ident);
-    while p.eat(Dot) {
+    p.bump(IDENT);
+    while p.eat(DOT) {
         // TODO: Error
-        p.bump(Ident);
+        p.bump(IDENT);
     }
-    p.finish_at(c, Path)
+    p.finish_at(c, PATH)
 }
 
 fn array_typ(p: &mut Parser) {
-    assert!(p.at(LBracket));
+    assert!(p.at(L_BRACKET));
     let c = p.checkpoint();
-    p.bump(LBracket);
+    p.bump(L_BRACKET);
     opt_mutability(p);
     typ(p);
-    p.bump(RBracket);
-    p.finish_at(c, ArrayT)
+    p.bump(R_BRACKET);
+    p.finish_at(c, ARRAY_TYPE)
 }
 
 fn opt_func_sort(p: &mut Parser) -> bool {
     let c = p.checkpoint();
-    if p.eat(SharedKw) {
-        p.eat(QueryKw);
-        p.finish_at(c, FuncSort);
+    if p.eat(SHARED_KW) {
+        p.eat(QUERY_KW);
+        p.finish_at(c, FUNC_SORT);
         true
-    } else if p.eat(QueryKw) {
-        p.finish_at(c, FuncSort);
+    } else if p.eat(QUERY_KW) {
+        p.finish_at(c, FUNC_SORT);
         true
     } else {
         false
@@ -77,127 +77,127 @@ fn opt_func_sort(p: &mut Parser) -> bool {
 }
 
 fn paren_or_tuple_typ(p: &mut Parser) {
-    assert!(p.at(LParen));
+    assert!(p.at(L_PAREN));
     let c = p.checkpoint();
-    p.bump(LParen);
-    if p.eat(RParen) {
-        p.finish_at(c, TupT);
+    p.bump(L_PAREN);
+    if p.eat(R_PAREN) {
+        p.finish_at(c, TUPLE_TYPE);
         return;
     }
     typ_item(p);
-    if p.eat(RParen) {
-        p.finish_at(c, ParenT);
+    if p.eat(R_PAREN) {
+        p.finish_at(c, PAREN_TYPE);
         return;
     }
-    while p.eat(Comma) {
+    while p.eat(COMMA) {
         typ_item(p);
     }
     // TODO Error
-    p.bump(RParen);
-    p.finish_at(c, TupT)
+    p.bump(R_PAREN);
+    p.finish_at(c, TUPLE_TYPE)
 }
 
 fn opt_annot(p: &mut Parser) {
     let c = p.checkpoint();
-    if p.eat(Colon) {
+    if p.eat(COLON) {
         typ(p);
-        p.finish_at(c, TypAnnot)
+        p.finish_at(c, TYPE_ANNOTATION)
     }
 }
 
 fn typ_tag(p: &mut Parser) {
     let c = p.checkpoint();
-    if !p.eat(Hash) {
+    if !p.eat(HASH) {
         // TODO: error
     }
-    if !p.eat(Ident) {
+    if !p.eat(IDENT) {
         // TODO: error
     }
     opt_annot(p);
-    p.finish_at(c, TypTag);
+    p.finish_at(c, TYPE_TAG);
 }
 
 fn typ_field(p: &mut Parser) {
     let c = p.checkpoint();
-    if opt_mutability(p) || (p.at(Ident) && p.nth_at(1, Colon)) {
-        p.bump(Ident);
-        p.bump(Colon);
+    if opt_mutability(p) || (p.at(IDENT) && p.nth_at(1, COLON)) {
+        p.bump(IDENT);
+        p.bump(COLON);
         typ(p);
-        p.finish_at(c, TypField);
+        p.finish_at(c, TYPE_FIELD);
     } else {
-        p.bump(Ident);
+        p.bump(IDENT);
         opt_typ_params(p);
         typ_nullary(p);
-        p.bump(Colon);
+        p.bump(COLON);
         typ(p);
-        p.finish_at(c, TypFieldFunc);
+        p.finish_at(c, TYPE_FIELD_FUNC);
     }
 }
 
 /// Does not create its own Node (so the level above can include object sorts)
 fn typ_obj(p: &mut Parser) {
-    if !p.eat(LBrace) {
+    if !p.eat(L_BRACE) {
         // TODO Error
         unreachable!("typ_obj")
     }
-    while p.at(Ident) || p.at(VarKw) {
+    while p.at(IDENT) || p.at(VAR_KW) {
         typ_field(p);
-        p.eat(Comma);
+        p.eat(COMMA);
     }
-    if !p.eat(RBrace) {
+    if !p.eat(R_BRACE) {
         // TODO: error
     }
 }
 
 fn typ_variant(p: &mut Parser) {
     let c = p.checkpoint();
-    if !p.eat(LBrace) {
+    if !p.eat(L_BRACE) {
         // TODO Error
         unreachable!("typ_variant")
     }
-    if p.at(Hash) && p.nth_at(1, RBrace) {
-        p.bump(Hash);
-        p.bump(RBrace);
-        return p.finish_at(c, VariantT);
+    if p.at(HASH) && p.nth_at(1, R_BRACE) {
+        p.bump(HASH);
+        p.bump(R_BRACE);
+        return p.finish_at(c, VARIANT_TYPE);
     }
-    while p.at(Hash) {
+    while p.at(HASH) {
         typ_tag(p);
-        p.eat(Comma);
+        p.eat(COMMA);
     }
-    if !p.eat(RBrace) {
+    if !p.eat(R_BRACE) {
         // TODO: error
     }
-    p.finish_at(c, VariantT)
+    p.finish_at(c, VARIANT_TYPE)
 }
 
 fn typ_bind(p: &mut Parser) {
     let c = p.checkpoint();
-    if !p.eat(Ident) {
+    if !p.eat(IDENT) {
         // TODO: Error
     }
-    if p.eat(Sub) {
+    if p.eat(SUB) {
         typ(p)
     }
-    p.finish_at(c, TypBind)
+    p.finish_at(c, TYPE_BIND)
 }
 
 fn typ_item(p: &mut Parser) {
     let c = p.checkpoint();
-    if p.at(Ident) && p.nth_at(1, Colon) {
-        p.bump(Ident);
-        p.finish_at(c, Name);
-        p.bump(Colon);
+    if p.at(IDENT) && p.nth_at(1, COLON) {
+        p.bump(IDENT);
+        p.finish_at(c, NAME);
+        p.bump(COLON);
         typ(p);
-        p.finish_at(c, NamedT);
-    } else if p.at(Ident) {
+        p.finish_at(c, NAMED_TYPE);
+    } else if p.at(IDENT) {
         typ_nullary(p);
-        if p.at(Arrow) {
-            p.finish_at(c, FuncArg);
-            p.bump(Arrow);
+        if p.at(ARROW) {
+            p.finish_at(c, FUNC_ARG);
+            p.bump(ARROW);
             let c1 = p.checkpoint();
             typ(p);
-            p.finish_at(c1, FuncResult);
-            p.finish_at(c, FuncT);
+            p.finish_at(c1, FUNC_RESULT);
+            p.finish_at(c, FUNC_TYPE);
         }
     } else {
         typ(p);
@@ -206,21 +206,21 @@ fn typ_item(p: &mut Parser) {
 
 fn typ_nullary(p: &mut Parser) {
     match p.current() {
-        LParen => paren_or_tuple_typ(p),
-        LBracket => array_typ(p),
-        Ident => {
+        L_PAREN => paren_or_tuple_typ(p),
+        L_BRACKET => array_typ(p),
+        IDENT => {
             let c = p.checkpoint();
             path(p);
             opt_typ_args(p);
-            p.finish_at(c, PathT)
+            p.finish_at(c, PATH_TYPE)
         }
-        LBrace => {
-            if p.nth_at(1, Hash) {
+        L_BRACE => {
+            if p.nth_at(1, HASH) {
                 typ_variant(p)
             } else {
                 let c = p.checkpoint();
                 typ_obj(p);
-                p.finish_at(c, ObjT)
+                p.finish_at(c, OBJECT_TYPE)
             }
         }
         // TODO: Error
@@ -230,9 +230,9 @@ fn typ_nullary(p: &mut Parser) {
 
 fn typ_un(p: &mut Parser) {
     let c = p.checkpoint();
-    if p.eat(Question) {
+    if p.eat(QUESTION) {
         typ_un(p);
-        p.finish_at(c, OptionalT);
+        p.finish_at(c, OPTIONAL_TYPE);
     } else {
         typ_nullary(p)
     }
@@ -240,31 +240,31 @@ fn typ_un(p: &mut Parser) {
 
 fn typ_pre(p: &mut Parser) {
     match p.current() {
-        AsyncKw => {
+        ASYNC_KW => {
             let c = p.checkpoint();
-            p.bump(AsyncKw);
+            p.bump(ASYNC_KW);
             typ_pre(p);
-            p.finish_at(c, AsyncT)
+            p.finish_at(c, ASYNC_TYPE)
         }
         // TODO: Only allow in privileged mode
-        PrimKw => {
+        PRIM_KW => {
             let c = p.checkpoint();
-            p.bump(PrimKw);
-            p.bump(Ident);
-            p.finish_at(c, PrimT)
+            p.bump(PRIM_KW);
+            p.bump(IDENT);
+            p.finish_at(c, PRIM_TYPE)
         }
-        ObjectKw | ActorKw | ModuleKw => {
+        OBJECT_KW | ACTOR_KW | MODULE_KW => {
             let c = p.checkpoint();
             p.bump_any();
-            p.finish_at(c, ObjSort);
+            p.finish_at(c, OBJECT_SORT);
             typ_obj(p);
-            p.finish_at(c, ObjT)
+            p.finish_at(c, OBJECT_TYPE)
         }
         _ => typ_un(p),
     }
 }
 
-const STARTS_PRE: TokenSet = TokenSet::new(&[AsyncKw, ObjectKw, ActorKw, ModuleKw, PrimKw]);
+const STARTS_PRE: TokenSet = TokenSet::new(&[ASYNC_KW, OBJECT_KW, ACTOR_KW, MODULE_KW, PRIM_KW]);
 
 pub(super) fn typ(p: &mut Parser) {
     let c = p.checkpoint();
@@ -272,25 +272,25 @@ pub(super) fn typ(p: &mut Parser) {
     let tp = opt_typ_params(p);
     if fs || tp {
         typ_un(p);
-        p.finish_at(c, FuncArg);
+        p.finish_at(c, FUNC_ARG);
         // TODO: Error
-        p.bump(Arrow);
+        p.bump(ARROW);
         let c1 = p.checkpoint();
         typ(p);
-        p.finish_at(c1, FuncResult);
-        p.finish_at(c, FuncT);
+        p.finish_at(c1, FUNC_RESULT);
+        p.finish_at(c, FUNC_TYPE);
     } else if STARTS_PRE.contains(p.current()) {
         typ_pre(p)
     } else {
         typ_un(p);
-        if p.at(Arrow) {
-            p.finish_at(c, FuncArg);
+        if p.at(ARROW) {
+            p.finish_at(c, FUNC_ARG);
             // TODO: Error
-            p.bump(Arrow);
+            p.bump(ARROW);
             let c1 = p.checkpoint();
             typ(p);
-            p.finish_at(c1, FuncResult);
-            p.finish_at(c, FuncT);
+            p.finish_at(c1, FUNC_RESULT);
+            p.finish_at(c, FUNC_TYPE);
         }
     }
 }

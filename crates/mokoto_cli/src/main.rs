@@ -19,11 +19,15 @@ fn main() -> io::Result<()> {
 
         let ty: Type = AstNode::cast(parse.syntax()).unwrap();
         match ty {
-            Type::PathType(path) => {
-                println!("{:?}<{:?}>", path.path().segments(), path.type_args());
-            }
+            // Type::PathType(path) => {
+            //     println!("{:?}<{:?}>", path.path().segments(), path.type_args());
+            // }
             Type::FuncType(func) => {
-                println!("{:?} -> {:?}>", func.arg_type(), func.result_type());
+                println!(
+                    "{:?} -> {:?}>",
+                    func.func_arg().unwrap().ty(),
+                    func.func_result().unwrap().ty()
+                );
             }
             ty => println!("{:?}", ty),
         }

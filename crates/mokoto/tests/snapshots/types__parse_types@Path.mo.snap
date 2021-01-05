@@ -5,6 +5,6 @@ expression: output
 Text
 
 ---
-PathT@0..4
-  Path@0..4
-    Ident@0..4 "Text"
+PATH_TYPE@0..4
+  PATH@0..4
+    IDENT@0..4 "Text"

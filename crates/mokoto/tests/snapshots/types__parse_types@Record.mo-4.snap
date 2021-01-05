@@ -5,30 +5,30 @@ expression: output
 { y<A>List<A> : Text }
 
 ---
-ObjT@0..22
-  LBrace@0..1 "{"
-  Space@1..2 " "
-  TypFieldFunc@2..21
-    Ident@2..3 "y"
-    TypParams@3..6
-      Lt@3..4 "<"
-      TypBind@4..5
-        Ident@4..5 "A"
-      Gt@5..6 ">"
-    PathT@6..14
-      Path@6..10
-        Ident@6..10 "List"
-      TypArgs@10..14
-        Lt@10..11 "<"
-        PathT@11..12
-          Path@11..12
-            Ident@11..12 "A"
-        Gt@12..13 ">"
-        Space@13..14 " "
-    Colon@14..15 ":"
-    Space@15..16 " "
-    PathT@16..21
-      Path@16..21
-        Ident@16..20 "Text"
-        Space@20..21 " "
-  RBrace@21..22 "}"
+OBJECT_TYPE@0..22
+  L_BRACE@0..1 "{"
+  SPACE@1..2 " "
+  TYPE_FIELD_FUNC@2..21
+    IDENT@2..3 "y"
+    TYPE_PARAMS@3..6
+      L_ANGLE@3..4 "<"
+      TYPE_BIND@4..5
+        IDENT@4..5 "A"
+      R_ANGLE@5..6 ">"
+    PATH_TYPE@6..14
+      PATH@6..10
+        IDENT@6..10 "List"
+      TYPE_ARGS@10..14
+        L_ANGLE@10..11 "<"
+        PATH_TYPE@11..12
+          PATH@11..12
+            IDENT@11..12 "A"
+        R_ANGLE@12..13 ">"
+        SPACE@13..14 " "
+    COLON@14..15 ":"
+    SPACE@15..16 " "
+    PATH_TYPE@16..21
+      PATH@16..21
+        IDENT@16..20 "Text"
+        SPACE@20..21 " "
+  R_BRACE@21..22 "}"

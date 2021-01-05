@@ -5,22 +5,22 @@ use crate::lexer::SyntaxKind;
 
 pub(super) fn decl(p: &mut Parser) {
     match p.current() {
-        SyntaxKind::LetKw => let_decl(p),
+        SyntaxKind::LET_KW => let_decl(p),
         _ => unreachable!("Unknown decl."),
     }
 }
 
 fn ident(p: &mut Parser) {
-    if !p.eat(SyntaxKind::Ident) {
+    if !p.eat(SyntaxKind::IDENT) {
         p.error("Expected an ident")
     }
 }
 
 fn let_decl(p: &mut Parser) {
     p.start_node(SyntaxKind::LetD);
-    p.bump(SyntaxKind::LetKw);
+    p.bump(SyntaxKind::LET_KW);
     pattern::pat(p);
-    if !p.eat(SyntaxKind::Equals) {
+    if !p.eat(SyntaxKind::EQUALS) {
         p.error("Expected an =");
     }
     expression::expr(p);

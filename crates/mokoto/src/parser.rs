@@ -104,7 +104,7 @@ impl<'a> Parser<'a> {
     fn nth(&self, n: usize) -> SyntaxKind {
         let len = self.tokens.len();
         if n >= len {
-            SyntaxKind::Eof
+            SyntaxKind::EOF
         } else {
             self.tokens[len - n - 1].1 .0
         }

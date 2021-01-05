@@ -5,10 +5,10 @@ expression: output
 Path.to.type
 
 ---
-PathT@0..12
-  Path@0..12
-    Ident@0..4 "Path"
-    Dot@4..5 "."
-    Ident@5..7 "to"
-    Dot@7..8 "."
-    Ident@8..12 "type"
+PATH_TYPE@0..12
+  PATH@0..12
+    IDENT@0..4 "Path"
+    DOT@4..5 "."
+    IDENT@5..7 "to"
+    DOT@7..8 "."
+    IDENT@8..12 "type"

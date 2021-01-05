@@ -1,3 +1,4 @@
+mod ast_src;
 pub mod codegen;
 
 pub use anyhow::{bail, Context as _, Result};

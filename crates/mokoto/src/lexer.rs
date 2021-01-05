@@ -25,7 +25,7 @@ impl<'a> Lexer<'a> {
         let mut tokens = vec![];
         loop {
             let tkn = lexer.next().unwrap();
-            if tkn.1 .0 == SyntaxKind::Eof {
+            if tkn.1 .0 == SyntaxKind::EOF {
                 tokens.push(tkn);
                 return tokens;
             }
@@ -35,13 +35,13 @@ impl<'a> Lexer<'a> {
 }
 
 fn is_trailing(kind: SyntaxKind) -> bool {
-    matches!(kind, SyntaxKind::Space | SyntaxKind::Tab)
+    matches!(kind, SyntaxKind::SPACE | SyntaxKind::TAB)
 }
 
 fn is_whitespace(kind: SyntaxKind) -> bool {
     matches!(
         kind,
-        SyntaxKind::Space | SyntaxKind::Tab | SyntaxKind::Linefeed
+        SyntaxKind::SPACE | SyntaxKind::TAB | SyntaxKind::LINEFEED
     )
 }
 
@@ -76,7 +76,7 @@ impl<'a> Iterator for Lexer<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         let mut leading = vec![];
         let mut trailing = vec![];
-        let mut next_token = (SyntaxKind::Eof, "");
+        let mut next_token = (SyntaxKind::EOF, "");
 
         while matches!(self.inner_peek(), Some(tkn) if is_whitespace(tkn.0)) {
             leading.push(self.inner_next().unwrap())
@@ -96,148 +96,155 @@ impl<'a> Iterator for Lexer<'a> {
 
 #[derive(Debug, Copy, Clone, PartialEq, Logos, FromPrimitive, ToPrimitive)]
 #[repr(u16)]
+#[allow(bad_style, missing_docs, unreachable_pub)]
 pub enum SyntaxKind {
     #[regex(" +")]
-    Space,
+    SPACE,
 
     #[regex("\t+")]
-    Tab,
+    TAB,
 
     #[regex("\n|\r\n")]
-    Linefeed,
+    LINEFEED,
 
     #[token("func")]
-    FnKw,
+    FUNC_KW,
 
     #[token("let")]
-    LetKw,
+    LET_KW,
 
     #[token("var")]
-    VarKw,
+    VAR_KW,
 
     #[token("switch")]
-    SwitchKw,
+    SWITCH_KW,
 
     #[token("case")]
-    CaseKw,
+    CASE_KW,
 
     #[token("true")]
-    TrueKw,
+    TRUE_KW,
 
     #[token("false")]
-    FalseKw,
+    FALSE_KW,
 
     #[token("shared")]
-    SharedKw,
+    SHARED_KW,
 
     #[token("query")]
-    QueryKw,
+    QUERY_KW,
 
     #[token("async")]
-    AsyncKw,
+    ASYNC_KW,
 
     #[token("object")]
-    ObjectKw,
+    OBJECT_KW,
 
     #[token("class")]
-    ClassKw,
+    CLASS_KW,
 
     #[token("actor")]
-    ActorKw,
+    ACTOR_KW,
 
     #[token("module")]
-    ModuleKw,
+    MODULE_KW,
 
     #[token("prim")]
-    PrimKw,
+    PRIM_KW,
 
     #[regex("[A-Za-z][A-Za-z0-9]*")]
-    Ident,
+    IDENT,
 
     #[regex("[0-9]+")]
-    NumberLit,
+    NUMBER_LIT,
 
     #[token(".")]
-    Dot,
+    DOT,
 
     #[token("+")]
-    Plus,
+    PLUS,
 
     #[token("-")]
-    Minus,
+    MINUS,
 
     #[token("*")]
-    Star,
+    STAR,
 
     #[token("/")]
-    Slash,
+    SLASH,
 
     #[token("=")]
-    Equals,
+    EQUALS,
+
+    #[token("==")]
+    DOUBLE_EQUALS,
 
     #[token("(")]
-    LParen,
+    L_PAREN,
 
     #[token(")")]
-    RParen,
+    R_PAREN,
 
     #[token("[")]
-    LBracket,
+    L_BRACKET,
 
     #[token("]")]
-    RBracket,
+    R_BRACKET,
 
     #[token("{")]
-    LBrace,
+    L_BRACE,
 
     #[token("}")]
-    RBrace,
+    R_BRACE,
 
     #[token("<")]
-    Lt,
+    L_ANGLE,
 
     #[token(">")]
-    Gt,
+    R_ANGLE,
 
     #[token("<:")]
-    Sub,
+    SUB,
 
     #[token("#")]
-    Hash,
+    HASH,
 
     #[token("?")]
-    Question,
+    QUESTION,
+
+    #[token("!")]
+    BANG,
 
     #[token(":")]
-    Colon,
+    COLON,
 
     #[token(";")]
-    Semicolon,
+    SEMICOLON,
 
     #[token(",")]
-    Comma,
+    COMMA,
 
     #[token("->")]
-    Arrow,
+    ARROW,
 
     #[error]
-    Error,
+    ERROR,
 
-    Eof,
+    EOF,
 
     // Composite nodes
     // Types
-    OptionalT,
-    ParenT,
-    AsyncT,
-    PathT,
-    ArrayT,
-    FuncT,
-    ObjT,
-    VariantT,
-    TupT,
-    NamedT,
-    PrimT,
+    OPTIONAL_TYPE,
+    PAREN_TYPE,
+    ASYNC_TYPE,
+    PATH_TYPE,
+    ARRAY_TYPE,
+    FUNC_TYPE,
+    OBJECT_TYPE,
+    VARIANT_TYPE,
+    TUPLE_TYPE,
+    NAMED_TYPE,
+    PRIM_TYPE,
 
     // Expressions
     Parenthesize, // a parenthesized expression
@@ -256,18 +263,72 @@ pub enum SyntaxKind {
     VarP,
 
     // Modifiers
-    Path,
-    Name,
+    PATH,
+    NAME,
     MutModifier,
-    TypArgs,
-    TypParams,
-    TypBind,
-    TypTag,
-    TypField,
-    TypFieldFunc,
-    TypAnnot,
-    FuncArg,
-    FuncResult,
-    FuncSort,
-    ObjSort,
+    TYPE_ARGS,
+    TYPE_PARAMS,
+    TYPE_BIND,
+    TYPE_BOUND,
+    TYPE_TAG,
+    TYPE_FIELD,
+    TYPE_FIELD_FUNC,
+    TYPE_ANNOTATION,
+    FUNC_ARG,
+    FUNC_RESULT,
+    FUNC_SORT,
+    OBJECT_SORT,
+}
+
+#[macro_export]
+macro_rules ! T {
+    [;] => { SyntaxKind::SEMICOLON };
+    [,] => { SyntaxKind::COMMA };
+    ['('] => { SyntaxKind::L_PAREN };
+    [')'] => { SyntaxKind::R_PAREN };
+    ['{'] => { SyntaxKind::L_BRACE };
+    ['}'] => { SyntaxKind::R_BRACE };
+    ['['] => { SyntaxKind::L_BRACKET };
+    [']'] => { SyntaxKind::R_BRACKET };
+    [<] => { SyntaxKind::L_ANGLE };
+    [>] => { SyntaxKind::R_ANGLE };
+    [#] => { SyntaxKind::HASH };
+    [?] => { SyntaxKind::QUESTION };
+    [+] => { SyntaxKind::PLUS };
+    [*] => { SyntaxKind::STAR };
+    [/] => { SyntaxKind::SLASH };
+    [^] => { SyntaxKind::CARET };
+    [%] => { SyntaxKind::PERCENT };
+    [_] => { SyntaxKind::UNDERSCORE };
+    [.] => { SyntaxKind::DOT };
+    [:] => { SyntaxKind::COLON };
+    [=] => { SyntaxKind::EQUALS };
+    [==] => { SyntaxKind::DOUBLE_EQUALS };
+    [!] => { SyntaxKind::BANG };
+    [-] => { SyntaxKind::MINUS };
+    [->] => { SyntaxKind::ARROW };
+    [<:] => { SyntaxKind::SUB };
+    [actor] => { SyntaxKind::ACTOR_KW };
+    [class] => { SyntaxKind::CLASS_KW };
+    [object] => { SyntaxKind::OBJECT_KW };
+    [false] => { SyntaxKind::FALSE_KW };
+    [async] => { SyntaxKind::ASYNC_KW };
+    [false] => { SyntaxKind::FALSE_KW };
+    [func] => { SyntaxKind::FUNC_KW };
+    [for] => { SyntaxKind::FOR_KW };
+    [if] => { SyntaxKind::IF_KW };
+    [else] => { SyntaxKind::ELSE_KW };
+    [let] => { SyntaxKind::LET_KW };
+    [switch] => { SyntaxKind::SWITCH_KW };
+    [module] => { SyntaxKind::MODULE_KW };
+    [var] => { SyntaxKind::VAR_KW };
+    [prim] => { SyntaxKind::PRIM_KW };
+    [query] => { SyntaxKind::QUERY_KW };
+    [shared] => { SyntaxKind::SHARED_KW };
+    [return] => { SyntaxKind::RETURN_KW };
+    [true] => { SyntaxKind::TRUE_KW };
+    [try] => { SyntaxKind::TRY_KW };
+    [type] => { SyntaxKind::TYPE_KW };
+    [while] => { SyntaxKind::WHILE_KW };
+    [ident] => { SyntaxKind::IDENT };
 }

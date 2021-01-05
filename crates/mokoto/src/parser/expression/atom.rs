@@ -1,6 +1,6 @@
 use super::*;
 
-pub(crate) const LITERAL_FIRST: TokenSet = TokenSet::new(&[TrueKw, FalseKw, NumberLit]);
+pub(crate) const LITERAL_FIRST: TokenSet = TokenSet::new(&[TRUE_KW, FALSE_KW, NUMBER_LIT]);
 
 pub(crate) fn literal(p: &mut Parser) -> bool {
     if !p.at_ts(LITERAL_FIRST) {

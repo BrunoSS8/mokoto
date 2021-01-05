@@ -5,19 +5,19 @@ expression: output
 module { x : Text }
 
 ---
-ObjT@0..19
-  ObjSort@0..7
-    ModuleKw@0..6 "module"
-    Space@6..7 " "
-  LBrace@7..8 "{"
-  Space@8..9 " "
-  TypField@9..18
-    Ident@9..10 "x"
-    Space@10..11 " "
-    Colon@11..12 ":"
-    Space@12..13 " "
-    PathT@13..18
-      Path@13..18
-        Ident@13..17 "Text"
-        Space@17..18 " "
-  RBrace@18..19 "}"
+OBJECT_TYPE@0..19
+  OBJECT_SORT@0..7
+    MODULE_KW@0..6 "module"
+    SPACE@6..7 " "
+  L_BRACE@7..8 "{"
+  SPACE@8..9 " "
+  TYPE_FIELD@9..18
+    IDENT@9..10 "x"
+    SPACE@10..11 " "
+    COLON@11..12 ":"
+    SPACE@12..13 " "
+    PATH_TYPE@13..18
+      PATH@13..18
+        IDENT@13..17 "Text"
+        SPACE@17..18 " "
+  R_BRACE@18..19 "}"

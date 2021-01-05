@@ -1,23 +1,22 @@
 ---
 source: crates/mokoto/tests/types.rs
 expression: output
-input_file: crates/mokoto/tests/passing/types/Func.mo
 ---
 query A -> B
 
 ---
-FuncT@0..12
-  FuncArg@0..8
-    FuncSort@0..6
-      QueryKw@0..5 "query"
-      Space@5..6 " "
-    PathT@6..8
-      Path@6..8
-        Ident@6..7 "A"
-        Space@7..8 " "
-  Arrow@8..10 "->"
-  Space@10..11 " "
-  FuncResult@11..12
-    PathT@11..12
-      Path@11..12
-        Ident@11..12 "B"
+FUNC_TYPE@0..12
+  FUNC_ARG@0..8
+    FUNC_SORT@0..6
+      QUERY_KW@0..5 "query"
+      SPACE@5..6 " "
+    PATH_TYPE@6..8
+      PATH@6..8
+        IDENT@6..7 "A"
+        SPACE@7..8 " "
+  ARROW@8..10 "->"
+  SPACE@10..11 " "
+  FUNC_RESULT@11..12
+    PATH_TYPE@11..12
+      PATH@11..12
+        IDENT@11..12 "B"

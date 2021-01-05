@@ -46,10 +46,12 @@ AsyncType =
   'async' Type
 
 PathType =
-  Path
+  Path TypeArgs?
 
-Path
-  = Name ('.' Path)*
+TypeArgs =
+  '<' args:(Type (',' Type)*) '>'
+
+Path = Name
 
 TupleType =
   '(' fields:(Type (',' Type)*)? ')'
@@ -58,13 +60,19 @@ ArrayType =
   '[' Type ']'
 
 FuncType =
-  'shared'? 'query'? TypParams? Type '->' Type
+  'shared'? 'query'? TypeParams? FuncArg '->' FuncResult
 
-TypParams =
-  '<' params:(TypBind (',' TypBind)*) '>'
+FuncArg = Type
+FuncResult = Type
 
-TypBind =
-  Path bound:('<:' Type)?
+TypeParams =
+  '<' params:(TypeBind (',' TypeBind)*) '>'
+
+TypeBind =
+  Path TypeBound?
+
+TypeBound =
+  '<:' Type
 
 ObjectType =
   ObjectSort? '{' fields:(TypeField (',' TypeField)*)? '}'
@@ -80,7 +88,7 @@ ObjectField =
 
 TypeField = 'var'? Name ':' Type
 // Does this have to be a functype?
-TypeFieldFunc = Name TypParams? FuncType
+TypeFieldFunc = Name TypeParams? FuncType
 
 VariantType =
   '{' variants:(TypeTag (',' TypeTag)*)? '}'
