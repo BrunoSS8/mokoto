@@ -81,6 +81,10 @@ fn generate_nodes(grammar: &AstSrc) -> Result<String> {
         .map(|node| {
             let name = format_ident!("{}", node.name);
             let kind = format_ident!("{}", to_upper_snake_case(&node.name));
+
+            // TODO: We're not using these yet, but eventually we can
+            // use these to increase ergonomics around nodes that hold
+            // names
             let traits = node.traits.iter().map(|trait_name| {
                 let trait_name = format_ident!("{}", trait_name);
                 quote!(impl ast::#trait_name for #name {})
@@ -456,33 +460,10 @@ fn to_lower_snake_case(s: &str) -> String {
     buf
 }
 
-fn to_pascal_case(s: &str) -> String {
-    let mut buf = String::with_capacity(s.len());
-    let mut prev_is_underscore = true;
-    for c in s.chars() {
-        if c == '_' {
-            prev_is_underscore = true;
-        } else if prev_is_underscore {
-            buf.push(c.to_ascii_uppercase());
-            prev_is_underscore = false;
-        } else {
-            buf.push(c.to_ascii_lowercase());
-        }
-    }
-    buf
-}
-
 fn pluralize(s: &str) -> String {
     format!("{}s", s)
 }
 
-impl AstNodeSrc {
-    fn remove_field(&mut self, to_remove: Vec<usize>) {
-        to_remove.into_iter().rev().for_each(|idx| {
-            self.fields.remove(idx);
-        });
-    }
-}
 impl Field {
     fn is_many(&self) -> bool {
         matches!(self, Field::Node { cardinality: Cardinality::Many, .. })
