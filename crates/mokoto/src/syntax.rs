@@ -25,3 +25,18 @@ impl rowan::Language for MotokoLanguage {
         rowan::SyntaxKind(kind.to_u16().unwrap())
     }
 }
+
+impl nodes::Path {
+    pub fn segments(&self) -> Vec<String> {
+        let idents = self.syntax.children_with_tokens().filter_map(|n| {
+            n.as_token().and_then(|t| {
+                if t.kind() == crate::T![ident] {
+                    Some(t.text().to_string())
+                } else {
+                    None
+                }
+            })
+        });
+        idents.collect()
+    }
+}
