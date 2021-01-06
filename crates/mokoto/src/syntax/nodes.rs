@@ -111,7 +111,7 @@ impl FuncType {
     pub fn func_arg(&self) -> Option<FuncArg> {
         support::child(&self.syntax)
     }
-    pub fn thin_arrow_token(&self) -> Option<SyntaxToken> {
+    pub fn arrow_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![->])
     }
     pub fn func_result(&self) -> Option<FuncResult> {
@@ -126,13 +126,13 @@ impl ObjectType {
     pub fn object_sort(&self) -> Option<ObjectSort> {
         support::child(&self.syntax)
     }
-    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
+    pub fn l_brace_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['{'])
     }
     pub fn fields(&self) -> AstChildren<TypeField> {
         support::children(&self.syntax)
     }
-    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
+    pub fn r_brace_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['}'])
     }
 }
@@ -141,13 +141,13 @@ pub struct VariantType {
     pub(crate) syntax: SyntaxNode,
 }
 impl VariantType {
-    pub fn l_curly_token(&self) -> Option<SyntaxToken> {
+    pub fn l_brace_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['{'])
     }
     pub fn variants(&self) -> AstChildren<TypeTag> {
         support::children(&self.syntax)
     }
-    pub fn r_curly_token(&self) -> Option<SyntaxToken> {
+    pub fn r_brace_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T!['}'])
     }
 }
@@ -312,7 +312,7 @@ pub struct TypeTag {
     pub(crate) syntax: SyntaxNode,
 }
 impl TypeTag {
-    pub fn pound_token(&self) -> Option<SyntaxToken> {
+    pub fn hash_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![#])
     }
     pub fn name(&self) -> Option<Name> {

@@ -1,5 +1,5 @@
 use mokoto::parser::{Parse, Parser};
-use mokoto::syntax::{ast::AstNode, nodes::Type, nodes::Path};
+use mokoto::syntax::{ast::AstNode, nodes::Path, nodes::Type};
 use std::io::{self, Write};
 
 fn main() -> io::Result<()> {
@@ -20,7 +20,11 @@ fn main() -> io::Result<()> {
         let ty: Type = AstNode::cast(parse.syntax()).unwrap();
         match ty {
             Type::PathType(path) => {
-                println!("{:?}<{:?}>", path.path().unwrap().segments(), path.type_args().unwrap());
+                println!(
+                    "{:?}<{:?}>",
+                    path.path().unwrap().segments(),
+                    path.type_args().unwrap()
+                );
             }
             Type::FuncType(func) => {
                 println!(
