@@ -299,7 +299,6 @@ fn lower(grammar: &Grammar) -> AstSrc {
             }
         }
     }
-    extract_enums(&mut res);
     res
 }
 
@@ -427,30 +426,6 @@ fn lower_comma_list(
     };
     acc.push(field);
     true
-}
-
-fn extract_enums(ast: &mut AstSrc) {
-    for node in &mut ast.nodes {
-        for enm in &ast.enums {
-            let mut to_remove = Vec::new();
-            for (i, field) in node.fields.iter().enumerate() {
-                let ty = field.ty().to_string();
-                if enm.variants.iter().any(|it| it == &ty) {
-                    to_remove.push(i);
-                }
-            }
-            if to_remove.len() == enm.variants.len() {
-                node.remove_field(to_remove);
-                let ty = enm.name.clone();
-                let name = to_lower_snake_case(&ty);
-                node.fields.push(Field::Node {
-                    name,
-                    ty,
-                    cardinality: Cardinality::Optional,
-                });
-            }
-        }
-    }
 }
 
 fn to_upper_snake_case(s: &str) -> String {
