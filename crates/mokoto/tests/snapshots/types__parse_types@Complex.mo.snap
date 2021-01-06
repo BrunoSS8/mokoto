@@ -1,0 +1,45 @@
+---
+source: crates/mokoto/tests/types.rs
+expression: output
+---
+// This is a type
+  { name : Text, /* A name */
+    var age : Nat  // An age
+  }
+
+---
+OBJECT_TYPE@0..80
+  LINE_COMMENT@0..17 "// This is a type"
+  LINEFEED@17..18 "\n"
+  SPACE@18..20 "  "
+  L_BRACE@20..21 "{"
+  SPACE@21..22 " "
+  TYPE_FIELD@22..33
+    IDENT@22..26 "name"
+    SPACE@26..27 " "
+    COLON@27..28 ":"
+    SPACE@28..29 " "
+    PATH_TYPE@29..33
+      PATH@29..33
+        IDENT@29..33 "Text"
+  COMMA@33..34 ","
+  SPACE@34..35 " "
+  TYPE_FIELD@35..67
+    MutModifier@35..56
+      BLOCK_COMMENT@35..47 "/* A name */"
+      LINEFEED@47..48 "\n"
+      SPACE@48..52 "    "
+      VAR_KW@52..55 "var"
+      SPACE@55..56 " "
+    IDENT@56..59 "age"
+    SPACE@59..60 " "
+    COLON@60..61 ":"
+    SPACE@61..62 " "
+    PATH_TYPE@62..67
+      PATH@62..67
+        IDENT@62..65 "Nat"
+        SPACE@65..67 "  "
+  LINE_COMMENT@67..76 "// An age"
+  LINEFEED@76..77 "\n"
+  SPACE@77..79 "  "
+  R_BRACE@79..80 "}"

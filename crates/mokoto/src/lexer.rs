@@ -41,7 +41,11 @@ fn is_trailing(kind: SyntaxKind) -> bool {
 fn is_whitespace(kind: SyntaxKind) -> bool {
     matches!(
         kind,
-        SyntaxKind::SPACE | SyntaxKind::TAB | SyntaxKind::LINEFEED
+        SyntaxKind::SPACE
+            | SyntaxKind::TAB
+            | SyntaxKind::LINEFEED
+            | SyntaxKind::LINE_COMMENT
+            | SyntaxKind::BLOCK_COMMENT
     )
 }
 
@@ -100,6 +104,12 @@ impl<'a> Iterator for Lexer<'a> {
 pub enum SyntaxKind {
     #[regex(" +")]
     SPACE,
+
+    #[regex(r"//[^\r\n]*")]
+    LINE_COMMENT,
+
+    #[regex(r"/\*(?:[^*]|\*[^/])*\*/")]
+    BLOCK_COMMENT,
 
     #[regex("\t+")]
     TAB,
