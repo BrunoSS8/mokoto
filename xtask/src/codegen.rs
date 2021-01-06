@@ -96,18 +96,16 @@ fn generate_nodes(grammar: &AstSrc) -> Result<String> {
                             support::children(&self.syntax)
                         }
                     }
-                } else {
-                    if let Some(token_kind) = field.token_kind() {
-                        quote! {
-                            pub fn #method_name(&self) -> Option<#ty> {
-                                support::token(&self.syntax, #token_kind)
-                            }
+                } else if let Some(token_kind) = field.token_kind() {
+                    quote! {
+                        pub fn #method_name(&self) -> Option<#ty> {
+                            support::token(&self.syntax, #token_kind)
                         }
-                    } else {
-                        quote! {
-                            pub fn #method_name(&self) -> Option<#ty> {
-                                support::child(&self.syntax)
-                            }
+                    }
+                } else {
+                    quote! {
+                        pub fn #method_name(&self) -> Option<#ty> {
+                            support::child(&self.syntax)
                         }
                     }
                 }
@@ -311,6 +309,7 @@ fn lower_enum(grammar: &Grammar, rule: &Rule) -> Option<Vec<String>> {
     for alternative in alternatives {
         match alternative {
             Rule::Node(it) => variants.push(grammar[*it].name.clone()),
+            // TODO: What's going on here?
             Rule::Token(it) if grammar[*it].name == ";" => (),
             _ => return None,
         }
