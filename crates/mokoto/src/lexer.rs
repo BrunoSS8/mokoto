@@ -280,6 +280,8 @@ pub enum SyntaxKind {
     VAR_PAT,
     WILDCARD_PAT,
     LITERAL_PAT,
+    PAREN_PAT,
+    TUPLE_PAT,
 
     // Literals
     LITERAL,
@@ -353,5 +355,6 @@ macro_rules ! T {
     [try] => { SyntaxKind::TRY_KW };
     [type] => { SyntaxKind::TYPE_KW };
     [while] => { SyntaxKind::WHILE_KW };
+    [number_lit] => { SyntaxKind::NUMBER_LIT };
     [ident] => { SyntaxKind::IDENT };
 }

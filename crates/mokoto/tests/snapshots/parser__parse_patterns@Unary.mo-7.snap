@@ -1,0 +1,24 @@
+---
+source: crates/mokoto/tests/parser.rs
+expression: output
+---
+(_, x, (true))
+
+---
+TUPLE_PAT@0..14
+  L_PAREN@0..1 "("
+  WILDCARD_PAT@1..2
+    UNDERSCORE@1..2 "_"
+  COMMA@2..3 ","
+  SPACE@3..4 " "
+  VAR_PAT@4..5
+    IDENT@4..5 "x"
+  COMMA@5..6 ","
+  SPACE@6..7 " "
+  PAREN_PAT@7..13
+    L_PAREN@7..8 "("
+    LITERAL_PAT@8..12
+      LITERAL@8..12
+        TRUE_KW@8..12 "true"
+    R_PAREN@12..13 ")"
+  R_PAREN@13..14 ")"

@@ -1,6 +1,6 @@
 mod declaration;
-mod literals;
 mod expression;
+mod literals;
 mod patterns;
 mod token_set;
 mod types;

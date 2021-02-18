@@ -2,8 +2,7 @@ use super::{Parser, TokenSet};
 use crate::lexer::SyntaxKind::*;
 
 // TODO: All literals
-pub(crate) const STARTS_LIT: TokenSet =
-    TokenSet::new(&[NULL_KW, TRUE_KW, FALSE_KW, NUMBER_LIT]);
+pub(crate) const STARTS_LIT: TokenSet = TokenSet::new(&[NULL_KW, TRUE_KW, FALSE_KW, NUMBER_LIT]);
 
 pub fn literal(p: &mut Parser) {
     let c = p.checkpoint();

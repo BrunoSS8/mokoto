@@ -21,6 +21,10 @@
 Name =
   'ident'
 
+// Literals
+Literal =
+  'number_lit' | 'true' | 'false' | 'null'
+
 // Types
 
 Type =
@@ -107,6 +111,12 @@ PrimType =
 Pattern =
     WildcardPat
   | VarPat
+  | LiteralPat
+  | ParenPat
+  | TuplePat
 
 WildcardPat = '_'
 VarPat = Name
+LiteralPat = Literal
+ParenPat = '(' Pattern ')'
+TuplePat = '(' patterns:(Pattern (',' Pattern)*)? ')'

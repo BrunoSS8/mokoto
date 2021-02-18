@@ -1,0 +1,12 @@
+---
+source: crates/mokoto/tests/parser.rs
+expression: output
+---
+(_)
+
+---
+PAREN_PAT@0..3
+  L_PAREN@0..1 "("
+  WILDCARD_PAT@1..2
+    UNDERSCORE@1..2 "_"
+  R_PAREN@2..3 ")"

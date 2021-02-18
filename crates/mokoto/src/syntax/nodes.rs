@@ -14,6 +14,24 @@ impl Name {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Literal {
+    pub(crate) syntax: SyntaxNode,
+}
+impl Literal {
+    pub fn number_lit_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![number_lit])
+    }
+    pub fn true_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![true])
+    }
+    pub fn false_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![false])
+    }
+    pub fn null_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![null])
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct OptionalType {
     pub(crate) syntax: SyntaxNode,
 }
@@ -344,6 +362,45 @@ impl VarPat {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct LiteralPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl LiteralPat {
+    pub fn literal(&self) -> Option<Literal> {
+        support::child(&self.syntax)
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ParenPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ParenPat {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn pattern(&self) -> Option<Pattern> {
+        support::child(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct TuplePat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl TuplePat {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn patterns(&self) -> AstChildren<Pattern> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Type {
     OptionalType(OptionalType),
     ParenType(ParenType),
@@ -366,10 +423,28 @@ pub enum ObjectField {
 pub enum Pattern {
     WildcardPat(WildcardPat),
     VarPat(VarPat),
+    LiteralPat(LiteralPat),
+    ParenPat(ParenPat),
+    TuplePat(TuplePat),
 }
 impl AstNode for Name {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == NAME
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for Literal {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == LITERAL
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -742,6 +817,51 @@ impl AstNode for VarPat {
         &self.syntax
     }
 }
+impl AstNode for LiteralPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == LITERAL_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for ParenPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PAREN_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for TuplePat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == TUPLE_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl From<OptionalType> for Type {
     fn from(node: OptionalType) -> Type {
         Type::OptionalType(node)
@@ -880,10 +1000,25 @@ impl From<VarPat> for Pattern {
         Pattern::VarPat(node)
     }
 }
+impl From<LiteralPat> for Pattern {
+    fn from(node: LiteralPat) -> Pattern {
+        Pattern::LiteralPat(node)
+    }
+}
+impl From<ParenPat> for Pattern {
+    fn from(node: ParenPat) -> Pattern {
+        Pattern::ParenPat(node)
+    }
+}
+impl From<TuplePat> for Pattern {
+    fn from(node: TuplePat) -> Pattern {
+        Pattern::TuplePat(node)
+    }
+}
 impl AstNode for Pattern {
     fn can_cast(kind: SyntaxKind) -> bool {
         match kind {
-            WILDCARD_PAT | VAR_PAT => true,
+            WILDCARD_PAT | VAR_PAT | LITERAL_PAT | PAREN_PAT | TUPLE_PAT => true,
             _ => false,
         }
     }
@@ -891,6 +1026,9 @@ impl AstNode for Pattern {
         let res = match syntax.kind() {
             WILDCARD_PAT => Pattern::WildcardPat(WildcardPat { syntax }),
             VAR_PAT => Pattern::VarPat(VarPat { syntax }),
+            LITERAL_PAT => Pattern::LiteralPat(LiteralPat { syntax }),
+            PAREN_PAT => Pattern::ParenPat(ParenPat { syntax }),
+            TUPLE_PAT => Pattern::TuplePat(TuplePat { syntax }),
             _ => return None,
         };
         Some(res)
@@ -899,6 +1037,9 @@ impl AstNode for Pattern {
         match self {
             Pattern::WildcardPat(it) => &it.syntax,
             Pattern::VarPat(it) => &it.syntax,
+            Pattern::LiteralPat(it) => &it.syntax,
+            Pattern::ParenPat(it) => &it.syntax,
+            Pattern::TuplePat(it) => &it.syntax,
         }
     }
 }
@@ -918,6 +1059,11 @@ impl std::fmt::Display for Pattern {
     }
 }
 impl std::fmt::Display for Name {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for Literal {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -1038,6 +1184,21 @@ impl std::fmt::Display for WildcardPat {
     }
 }
 impl std::fmt::Display for VarPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for LiteralPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for ParenPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for TuplePat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
