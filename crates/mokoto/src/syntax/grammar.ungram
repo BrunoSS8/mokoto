@@ -90,7 +90,10 @@ ObjectField =
     TypeField
   | TypeFieldFunc
 
-TypeField = 'var'? Name ':' Type
+TypeAnnotation =
+  ':' Type
+
+TypeField = 'var'? TypeAnnotation
 // Does this have to be a functype?
 TypeFieldFunc = Name TypeParams? FuncType
 
@@ -98,7 +101,7 @@ VariantType =
   '{' variants:(TypeTag (',' TypeTag)*)? '}'
 
 TypeTag =
-  '#' Name (':' Type)?
+  '#' Name TypeAnnotation?
 
 NamedType =
   Name ':' Type
@@ -114,9 +117,21 @@ Pattern =
   | LiteralPat
   | ParenPat
   | TuplePat
+  | ObjectPat
 
 WildcardPat = '_'
 VarPat = Name
 LiteralPat = Literal
 ParenPat = '(' Pattern ')'
 TuplePat = '(' patterns:(Pattern (',' Pattern)*)? ')'
+
+ObjectPat = '(' fields:(PatternField (';' PatternField)*)? ')'
+
+PatternField =
+    PatternFieldPun
+  | PatternFieldPat
+
+PatternFieldPun =
+  'ident' TypeAnnotation?
+PatternFieldPat =
+  'ident' TypeAnnotation? '=' Pattern

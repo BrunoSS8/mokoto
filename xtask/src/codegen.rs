@@ -397,6 +397,8 @@ fn lower_rule(acc: &mut Vec<Field>, grammar: &Grammar, label: Option<&String>, r
 
 // Matches rules of the shape:
 // (T (',' T)*)
+// or
+// (T (';' T)*)
 fn lower_comma_list(
     acc: &mut Vec<Field>,
     grammar: &Grammar,
@@ -416,7 +418,11 @@ fn lower_comma_list(
         _ => return false,
     };
     match repeat.as_slice() {
-        [Rule::Token(comma), Rule::Node(n)] if n == node && grammar[*comma].name == "," => (),
+        [Rule::Token(comma), Rule::Node(n)]
+            if n == node && (grammar[*comma].name == "," || grammar[*comma].name == ";") =>
+        {
+            ()
+        }
         _ => return false,
     }
     let ty = grammar[*node].name.clone();

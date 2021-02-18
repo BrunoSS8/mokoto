@@ -1,9 +1,10 @@
 use super::literals::{literal, STARTS_LIT};
+use super::types::opt_annot;
 use super::Parser;
 use crate::lexer::SyntaxKind::*;
 
 pub(super) fn pattern(p: &mut Parser) {
-    pat_plain(p)
+    pat_nullary(p)
 }
 
 fn paren_or_tuple_pattern(p: &mut Parser) {
@@ -25,6 +26,39 @@ fn paren_or_tuple_pattern(p: &mut Parser) {
     // TODO Error
     p.bump(R_PAREN);
     p.finish_at(c, TUPLE_PAT)
+}
+
+fn pat_field(p: &mut Parser) -> bool {
+    let c = p.checkpoint();
+    if !p.eat(IDENT) {
+        return false;
+    }
+    opt_annot(p);
+    if p.eat(EQUALS) {
+        pattern(p);
+        p.finish_at(c, PATTERN_FIELD_PAT)
+    } else {
+        p.finish_at(c, PATTERN_FIELD_PUN)
+    }
+    true
+}
+
+fn pat_nullary(p: &mut Parser) {
+    if p.at(L_BRACE) {
+        let c = p.checkpoint();
+        p.bump(L_BRACE);
+        while pat_field(p) {
+            if !p.eat(SEMICOLON) {
+                break;
+            }
+        }
+        if !p.eat(R_BRACE) {
+            unreachable!()
+        }
+        p.finish_at(c, OBJECT_PAT)
+    } else {
+        pat_plain(p)
+    }
 }
 
 fn pat_plain(p: &mut Parser) {

@@ -282,6 +282,7 @@ pub enum SyntaxKind {
     LITERAL_PAT,
     PAREN_PAT,
     TUPLE_PAT,
+    OBJECT_PAT,
 
     // Literals
     LITERAL,
@@ -301,6 +302,8 @@ pub enum SyntaxKind {
     FUNC_ARG,
     FUNC_RESULT,
     FUNC_SORT,
+    PATTERN_FIELD_PUN,
+    PATTERN_FIELD_PAT,
     OBJECT_SORT,
 }
 

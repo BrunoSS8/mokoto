@@ -300,13 +300,7 @@ impl TypeField {
     pub fn var_token(&self) -> Option<SyntaxToken> {
         support::token(&self.syntax, T![var])
     }
-    pub fn name(&self) -> Option<Name> {
-        support::child(&self.syntax)
-    }
-    pub fn colon_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:])
-    }
-    pub fn ty(&self) -> Option<Type> {
+    pub fn type_annotation(&self) -> Option<TypeAnnotation> {
         support::child(&self.syntax)
     }
 }
@@ -326,6 +320,18 @@ impl TypeFieldFunc {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct TypeAnnotation {
+    pub(crate) syntax: SyntaxNode,
+}
+impl TypeAnnotation {
+    pub fn colon_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![:])
+    }
+    pub fn ty(&self) -> Option<Type> {
+        support::child(&self.syntax)
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct TypeTag {
     pub(crate) syntax: SyntaxNode,
 }
@@ -336,10 +342,7 @@ impl TypeTag {
     pub fn name(&self) -> Option<Name> {
         support::child(&self.syntax)
     }
-    pub fn colon_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![:])
-    }
-    pub fn ty(&self) -> Option<Type> {
+    pub fn type_annotation(&self) -> Option<TypeAnnotation> {
         support::child(&self.syntax)
     }
 }
@@ -401,6 +404,51 @@ impl TuplePat {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct ObjectPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl ObjectPat {
+    pub fn l_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T!['('])
+    }
+    pub fn fields(&self) -> AstChildren<PatternField> {
+        support::children(&self.syntax)
+    }
+    pub fn r_paren_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![')'])
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PatternFieldPun {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PatternFieldPun {
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![ident])
+    }
+    pub fn type_annotation(&self) -> Option<TypeAnnotation> {
+        support::child(&self.syntax)
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct PatternFieldPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl PatternFieldPat {
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![ident])
+    }
+    pub fn type_annotation(&self) -> Option<TypeAnnotation> {
+        support::child(&self.syntax)
+    }
+    pub fn eq_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![=])
+    }
+    pub fn pattern(&self) -> Option<Pattern> {
+        support::child(&self.syntax)
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Type {
     OptionalType(OptionalType),
     ParenType(ParenType),
@@ -426,6 +474,12 @@ pub enum Pattern {
     LiteralPat(LiteralPat),
     ParenPat(ParenPat),
     TuplePat(TuplePat),
+    ObjectPat(ObjectPat),
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum PatternField {
+    PatternFieldPun(PatternFieldPun),
+    PatternFieldPat(PatternFieldPat),
 }
 impl AstNode for Name {
     fn can_cast(kind: SyntaxKind) -> bool {
@@ -772,6 +826,21 @@ impl AstNode for TypeFieldFunc {
         &self.syntax
     }
 }
+impl AstNode for TypeAnnotation {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == TYPE_ANNOTATION
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for TypeTag {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == TYPE_TAG
@@ -850,6 +919,51 @@ impl AstNode for ParenPat {
 impl AstNode for TuplePat {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == TUPLE_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for ObjectPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == OBJECT_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PatternFieldPun {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PATTERN_FIELD_PUN
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for PatternFieldPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == PATTERN_FIELD_PAT
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -1015,10 +1129,15 @@ impl From<TuplePat> for Pattern {
         Pattern::TuplePat(node)
     }
 }
+impl From<ObjectPat> for Pattern {
+    fn from(node: ObjectPat) -> Pattern {
+        Pattern::ObjectPat(node)
+    }
+}
 impl AstNode for Pattern {
     fn can_cast(kind: SyntaxKind) -> bool {
         match kind {
-            WILDCARD_PAT | VAR_PAT | LITERAL_PAT | PAREN_PAT | TUPLE_PAT => true,
+            WILDCARD_PAT | VAR_PAT | LITERAL_PAT | PAREN_PAT | TUPLE_PAT | OBJECT_PAT => true,
             _ => false,
         }
     }
@@ -1029,6 +1148,7 @@ impl AstNode for Pattern {
             LITERAL_PAT => Pattern::LiteralPat(LiteralPat { syntax }),
             PAREN_PAT => Pattern::ParenPat(ParenPat { syntax }),
             TUPLE_PAT => Pattern::TuplePat(TuplePat { syntax }),
+            OBJECT_PAT => Pattern::ObjectPat(ObjectPat { syntax }),
             _ => return None,
         };
         Some(res)
@@ -1040,6 +1160,39 @@ impl AstNode for Pattern {
             Pattern::LiteralPat(it) => &it.syntax,
             Pattern::ParenPat(it) => &it.syntax,
             Pattern::TuplePat(it) => &it.syntax,
+            Pattern::ObjectPat(it) => &it.syntax,
+        }
+    }
+}
+impl From<PatternFieldPun> for PatternField {
+    fn from(node: PatternFieldPun) -> PatternField {
+        PatternField::PatternFieldPun(node)
+    }
+}
+impl From<PatternFieldPat> for PatternField {
+    fn from(node: PatternFieldPat) -> PatternField {
+        PatternField::PatternFieldPat(node)
+    }
+}
+impl AstNode for PatternField {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        match kind {
+            PATTERN_FIELD_PUN | PATTERN_FIELD_PAT => true,
+            _ => false,
+        }
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            PATTERN_FIELD_PUN => PatternField::PatternFieldPun(PatternFieldPun { syntax }),
+            PATTERN_FIELD_PAT => PatternField::PatternFieldPat(PatternFieldPat { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            PatternField::PatternFieldPun(it) => &it.syntax,
+            PatternField::PatternFieldPat(it) => &it.syntax,
         }
     }
 }
@@ -1054,6 +1207,11 @@ impl std::fmt::Display for ObjectField {
     }
 }
 impl std::fmt::Display for Pattern {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PatternField {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -1173,6 +1331,11 @@ impl std::fmt::Display for TypeFieldFunc {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for TypeAnnotation {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for TypeTag {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
@@ -1199,6 +1362,21 @@ impl std::fmt::Display for ParenPat {
     }
 }
 impl std::fmt::Display for TuplePat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for ObjectPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PatternFieldPun {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for PatternFieldPat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

@@ -97,7 +97,7 @@ fn paren_or_tuple_typ(p: &mut Parser) {
     p.finish_at(c, TUPLE_TYPE)
 }
 
-fn opt_annot(p: &mut Parser) {
+pub(crate) fn opt_annot(p: &mut Parser) {
     let c = p.checkpoint();
     if p.eat(COLON) {
         typ(p);

@@ -1,0 +1,12 @@
+---
+source: crates/mokoto/tests/parser.rs
+expression: output
+---
+{x}
+
+---
+OBJECT_PAT@0..3
+  L_BRACE@0..1 "{"
+  PATTERN_FIELD_PUN@1..2
+    IDENT@1..2 "x"
+  R_BRACE@2..3 "}"

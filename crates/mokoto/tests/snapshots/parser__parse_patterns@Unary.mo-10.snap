@@ -1,0 +1,19 @@
+---
+source: crates/mokoto/tests/parser.rs
+expression: output
+---
+{x : Nat}
+
+---
+OBJECT_PAT@0..9
+  L_BRACE@0..1 "{"
+  PATTERN_FIELD_PUN@1..8
+    IDENT@1..2 "x"
+    SPACE@2..3 " "
+    TYPE_ANNOTATION@3..8
+      COLON@3..4 ":"
+      SPACE@4..5 " "
+      PATH_TYPE@5..8
+        PATH@5..8
+          IDENT@5..8 "Nat"
+  R_BRACE@8..9 "}"
