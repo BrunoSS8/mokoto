@@ -1,0 +1,10 @@
+---
+source: crates/mokoto/tests/parser.rs
+expression: output
+---
+null
+
+---
+LITERAL_PAT@0..4
+  LITERAL@0..4
+    NULL_KW@0..4 "null"

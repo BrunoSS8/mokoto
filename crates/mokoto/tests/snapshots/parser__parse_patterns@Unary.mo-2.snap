@@ -1,0 +1,9 @@
+---
+source: crates/mokoto/tests/parser.rs
+expression: output
+---
+x
+
+---
+VAR_PAT@0..1
+  IDENT@0..1 "x"

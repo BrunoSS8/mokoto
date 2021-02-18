@@ -101,3 +101,12 @@ NamedType =
 
 PrimType =
   'prim' Name
+
+// Patterns
+
+Pattern =
+    WildcardPat
+  | VarPat
+
+WildcardPat = '_'
+VarPat = Name

@@ -1,5 +1,5 @@
 ---
-source: crates/mokoto/tests/types.rs
+source: crates/mokoto/tests/parser.rs
 expression: output
 ---
 // This is a type

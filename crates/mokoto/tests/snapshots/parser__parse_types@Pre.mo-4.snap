@@ -1,13 +1,13 @@
 ---
-source: crates/mokoto/tests/types.rs
+source: crates/mokoto/tests/parser.rs
 expression: output
 ---
-object { x : Text }
+module { x : Text }
 
 ---
 OBJECT_TYPE@0..19
   OBJECT_SORT@0..7
-    OBJECT_KW@0..6 "object"
+    MODULE_KW@0..6 "module"
     SPACE@6..7 " "
   L_BRACE@7..8 "{"
   SPACE@8..9 " "

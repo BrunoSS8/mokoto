@@ -1,5 +1,5 @@
 ---
-source: crates/mokoto/tests/types.rs
+source: crates/mokoto/tests/parser.rs
 expression: output
 ---
 { var x : Text, y : Nat }

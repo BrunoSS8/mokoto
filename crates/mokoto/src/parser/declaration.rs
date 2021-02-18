@@ -1,5 +1,5 @@
 use super::expression;
-use super::pattern;
+use super::patterns;
 use super::Parser;
 use crate::lexer::SyntaxKind;
 
@@ -19,7 +19,7 @@ fn ident(p: &mut Parser) {
 fn let_decl(p: &mut Parser) {
     p.start_node(SyntaxKind::LetD);
     p.bump(SyntaxKind::LET_KW);
-    pattern::pat(p);
+    patterns::pattern(p);
     if !p.eat(SyntaxKind::EQUALS) {
         p.error("Expected an =");
     }

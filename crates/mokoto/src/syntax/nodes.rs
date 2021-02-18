@@ -326,6 +326,24 @@ impl TypeTag {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct WildcardPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl WildcardPat {
+    pub fn underscore_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![_])
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct VarPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl VarPat {
+    pub fn name(&self) -> Option<Name> {
+        support::child(&self.syntax)
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Type {
     OptionalType(OptionalType),
     ParenType(ParenType),
@@ -343,6 +361,11 @@ pub enum Type {
 pub enum ObjectField {
     TypeField(TypeField),
     TypeFieldFunc(TypeFieldFunc),
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Pattern {
+    WildcardPat(WildcardPat),
+    VarPat(VarPat),
 }
 impl AstNode for Name {
     fn can_cast(kind: SyntaxKind) -> bool {
@@ -689,6 +712,36 @@ impl AstNode for TypeTag {
         &self.syntax
     }
 }
+impl AstNode for WildcardPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == WILDCARD_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for VarPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == VAR_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl From<OptionalType> for Type {
     fn from(node: OptionalType) -> Type {
         Type::OptionalType(node)
@@ -817,12 +870,49 @@ impl AstNode for ObjectField {
         }
     }
 }
+impl From<WildcardPat> for Pattern {
+    fn from(node: WildcardPat) -> Pattern {
+        Pattern::WildcardPat(node)
+    }
+}
+impl From<VarPat> for Pattern {
+    fn from(node: VarPat) -> Pattern {
+        Pattern::VarPat(node)
+    }
+}
+impl AstNode for Pattern {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        match kind {
+            WILDCARD_PAT | VAR_PAT => true,
+            _ => false,
+        }
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        let res = match syntax.kind() {
+            WILDCARD_PAT => Pattern::WildcardPat(WildcardPat { syntax }),
+            VAR_PAT => Pattern::VarPat(VarPat { syntax }),
+            _ => return None,
+        };
+        Some(res)
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        match self {
+            Pattern::WildcardPat(it) => &it.syntax,
+            Pattern::VarPat(it) => &it.syntax,
+        }
+    }
+}
 impl std::fmt::Display for Type {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
 impl std::fmt::Display for ObjectField {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for Pattern {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
@@ -938,6 +1028,16 @@ impl std::fmt::Display for TypeFieldFunc {
     }
 }
 impl std::fmt::Display for TypeTag {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for WildcardPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for VarPat {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

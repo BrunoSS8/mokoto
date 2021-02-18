@@ -138,6 +138,9 @@ pub enum SyntaxKind {
     #[token("false")]
     FALSE_KW,
 
+    #[token("null")]
+    NULL_KW,
+
     #[token("shared")]
     SHARED_KW,
 
@@ -176,6 +179,9 @@ pub enum SyntaxKind {
 
     #[token("-")]
     MINUS,
+
+    #[token("_")]
+    UNDERSCORE,
 
     #[token("*")]
     STAR,
@@ -243,6 +249,7 @@ pub enum SyntaxKind {
     EOF,
 
     // Composite nodes
+
     // Types
     OPTIONAL_TYPE,
     PAREN_TYPE,
@@ -270,7 +277,12 @@ pub enum SyntaxKind {
     Root,
 
     // Patterns
-    VarP,
+    VAR_PAT,
+    WILDCARD_PAT,
+    LITERAL_PAT,
+
+    // Literals
+    LITERAL,
 
     // Modifiers
     PATH,
@@ -321,9 +333,10 @@ macro_rules ! T {
     [actor] => { SyntaxKind::ACTOR_KW };
     [class] => { SyntaxKind::CLASS_KW };
     [object] => { SyntaxKind::OBJECT_KW };
-    [false] => { SyntaxKind::FALSE_KW };
     [async] => { SyntaxKind::ASYNC_KW };
+    [true] => { SyntaxKind::TRUE_KW };
     [false] => { SyntaxKind::FALSE_KW };
+    [null] => { SyntaxKind::NULL_KW };
     [func] => { SyntaxKind::FUNC_KW };
     [for] => { SyntaxKind::FOR_KW };
     [if] => { SyntaxKind::IF_KW };

@@ -1,0 +1,9 @@
+---
+source: crates/mokoto/tests/parser.rs
+expression: output
+---
+_
+
+---
+WILDCARD_PAT@0..1
+  UNDERSCORE@0..1 "_"

@@ -74,3 +74,21 @@ fn parse_types() {
         }
     });
 }
+
+#[test]
+fn parse_patterns() {
+    use std::fs;
+
+    glob!("passing/patterns/*.mo", |path| {
+        let input = {
+            let mut input = fs::read_to_string(path).unwrap();
+            normalize_newlines(&mut input);
+            input
+        };
+        for inp in input.split("---\n") {
+            let parse = Parser::new(&inp).parse_pattern();
+            let output = format!("{}\n---\n{}", inp, parse.debug_tree());
+            assert_snapshot!(output);
+        }
+    });
+}

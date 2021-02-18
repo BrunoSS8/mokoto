@@ -1,0 +1,10 @@
+---
+source: crates/mokoto/tests/parser.rs
+expression: output
+---
+true
+
+---
+LITERAL_PAT@0..4
+  LITERAL@0..4
+    TRUE_KW@0..4 "true"

@@ -1,6 +1,7 @@
 mod declaration;
+mod literals;
 mod expression;
-mod pattern;
+mod patterns;
 mod token_set;
 mod types;
 
@@ -43,6 +44,15 @@ impl<'a> Parser<'a> {
 
     pub fn parse_typ(mut self) -> Parse {
         types::typ(&mut self);
+
+        Parse {
+            green_node: self.builder.finish(),
+            errors: self.errors,
+        }
+    }
+
+    pub fn parse_pattern(mut self) -> Parse {
+        patterns::pattern(&mut self);
 
         Parse {
             green_node: self.builder.finish(),
