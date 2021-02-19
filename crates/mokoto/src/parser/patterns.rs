@@ -43,6 +43,19 @@ fn pat_field(p: &mut Parser) -> bool {
     true
 }
 
+fn pat_un(p: &mut Parser) {
+    let c = p.checkpoint();
+    match p.current() {
+        HASH => {
+            p.bump(HASH);
+            if !p.eat(IDENT) {
+                // TODO: Error
+                unreachable!()
+            }
+        }
+    }
+}
+
 fn pat_nullary(p: &mut Parser) {
     if p.at(L_BRACE) {
         let c = p.checkpoint();
