@@ -132,6 +132,6 @@ PatternField =
   | PatternFieldPat
 
 PatternFieldPun =
-  'ident' TypeAnnotation?
+  Name TypeAnnotation?
 PatternFieldPat =
   'ident' TypeAnnotation? '=' Pattern

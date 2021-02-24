@@ -1,4 +1,5 @@
 use crate::lexer::SyntaxKind;
+use crate::syntax::nodes::{Pattern, PatternField};
 use num_traits::{FromPrimitive, ToPrimitive};
 use rowan::SmolStr;
 
@@ -38,5 +39,34 @@ impl nodes::Path {
             })
         });
         idents.collect()
+    }
+}
+
+impl nodes::Pattern {
+    pub fn idents(&self) -> Vec<nodes::Name> {
+        match self {
+            Pattern::WildcardPat(_) => vec![],
+            Pattern::VarPat(n) => vec![n.name().unwrap()],
+            Pattern::LiteralPat(_) => vec![],
+            Pattern::ParenPat(p) => p.pattern().unwrap().idents(),
+            Pattern::TuplePat(p) => {
+                let mut res = vec![];
+                for p in p.patterns() {
+                    res.append(&mut p.idents())
+                }
+                res
+            }
+            Pattern::ObjectPat(p) => {
+                let mut res = vec![];
+                for field in p.fields() {
+                    let mut names = match field {
+                        PatternField::PatternFieldPun(p) => vec![p.name().unwrap()],
+                        PatternField::PatternFieldPat(p) => p.pattern().unwrap().idents(),
+                    };
+                    res.append(&mut names);
+                }
+                res
+            }
+        }
     }
 }

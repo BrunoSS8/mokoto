@@ -33,6 +33,7 @@ fn pat_field(p: &mut Parser) -> bool {
     if !p.eat(IDENT) {
         return false;
     }
+    p.finish_at(c, NAME);
     opt_annot(p);
     if p.eat(EQUALS) {
         pattern(p);
@@ -53,6 +54,7 @@ fn pat_un(p: &mut Parser) {
                 unreachable!()
             }
         }
+        _ => pat_nullary(p),
     }
 }
 
@@ -83,13 +85,14 @@ fn pat_plain(p: &mut Parser) {
         }
         IDENT => {
             p.bump(IDENT);
+            p.finish_at(c, NAME);
             p.finish_at(c, VAR_PAT)
         }
+        L_PAREN => paren_or_tuple_pattern(p),
         t if STARTS_LIT.contains(t) => {
             literal(p);
             p.finish_at(c, LITERAL_PAT)
         }
-        L_PAREN => paren_or_tuple_pattern(p),
         // TODO: Error
         _ => unreachable!(), // TODO: Error
     }

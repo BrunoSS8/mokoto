@@ -6,4 +6,5 @@ x
 
 ---
 VAR_PAT@0..1
-  IDENT@0..1 "x"
+  NAME@0..1
+    IDENT@0..1 "x"

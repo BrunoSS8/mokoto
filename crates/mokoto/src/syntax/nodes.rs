@@ -423,8 +423,8 @@ pub struct PatternFieldPun {
     pub(crate) syntax: SyntaxNode,
 }
 impl PatternFieldPun {
-    pub fn ident_token(&self) -> Option<SyntaxToken> {
-        support::token(&self.syntax, T![ident])
+    pub fn name(&self) -> Option<Name> {
+        support::child(&self.syntax)
     }
     pub fn type_annotation(&self) -> Option<TypeAnnotation> {
         support::child(&self.syntax)

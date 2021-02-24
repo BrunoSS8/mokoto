@@ -8,8 +8,9 @@ expression: output
 OBJECT_PAT@0..13
   L_BRACE@0..1 "{"
   PATTERN_FIELD_PAT@1..12
-    IDENT@1..2 "x"
-    SPACE@2..3 " "
+    NAME@1..3
+      IDENT@1..2 "x"
+      SPACE@2..3 " "
     TYPE_ANNOTATION@3..9
       COLON@3..4 ":"
       SPACE@4..5 " "
@@ -20,5 +21,6 @@ OBJECT_PAT@0..13
     EQUALS@9..10 "="
     SPACE@10..11 " "
     VAR_PAT@11..12
-      IDENT@11..12 "y"
+      NAME@11..12
+        IDENT@11..12 "y"
   R_BRACE@12..13 "}"
