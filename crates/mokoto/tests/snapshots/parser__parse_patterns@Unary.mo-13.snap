@@ -1,0 +1,11 @@
+---
+source: crates/mokoto/tests/parser.rs
+expression: output
+---
+#variant
+
+---
+VARIANT_PAT@0..8
+  TAG@0..8
+    HASH@0..1 "#"
+    IDENT@1..8 "variant"

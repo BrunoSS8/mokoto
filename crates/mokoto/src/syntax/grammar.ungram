@@ -118,6 +118,7 @@ Pattern =
   | ParenPat
   | TuplePat
   | ObjectPat
+  | VariantPat
 
 WildcardPat = '_'
 VarPat = Name
@@ -135,3 +136,7 @@ PatternFieldPun =
   Name TypeAnnotation?
 PatternFieldPat =
   'ident' TypeAnnotation? '=' Pattern
+
+Tag = '#' 'ident'
+
+VariantPat = Tag Pattern?

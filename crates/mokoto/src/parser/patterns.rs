@@ -4,7 +4,7 @@ use super::Parser;
 use crate::lexer::SyntaxKind::*;
 
 pub(super) fn pattern(p: &mut Parser) {
-    pat_nullary(p)
+    pat_un(p)
 }
 
 fn paren_or_tuple_pattern(p: &mut Parser) {
@@ -53,12 +53,20 @@ fn pat_un(p: &mut Parser) {
                 // TODO: Error
                 unreachable!()
             }
+            p.finish_at(c, TAG);
+            let _ = pat_nullary(p);
+            p.finish_at(c, VARIANT_PAT)
         }
-        _ => pat_nullary(p),
+        _ => {
+            if !pat_nullary(p) {
+                // TODO: Error
+                unreachable!()
+            }
+        }
     }
 }
 
-fn pat_nullary(p: &mut Parser) {
+fn pat_nullary(p: &mut Parser) -> bool {
     if p.at(L_BRACE) {
         let c = p.checkpoint();
         p.bump(L_BRACE);
@@ -70,18 +78,19 @@ fn pat_nullary(p: &mut Parser) {
         if !p.eat(R_BRACE) {
             unreachable!()
         }
-        p.finish_at(c, OBJECT_PAT)
+        p.finish_at(c, OBJECT_PAT);
+        true
     } else {
         pat_plain(p)
     }
 }
 
-fn pat_plain(p: &mut Parser) {
+fn pat_plain(p: &mut Parser) -> bool {
     let c = p.checkpoint();
     match p.current() {
         UNDERSCORE => {
             p.bump(UNDERSCORE);
-            p.finish_at(c, WILDCARD_PAT)
+            p.finish_at(c, WILDCARD_PAT);
         }
         IDENT => {
             p.bump(IDENT);
@@ -94,6 +103,7 @@ fn pat_plain(p: &mut Parser) {
             p.finish_at(c, LITERAL_PAT)
         }
         // TODO: Error
-        _ => unreachable!(), // TODO: Error
-    }
+        _ => return false,
+    };
+    true
 }

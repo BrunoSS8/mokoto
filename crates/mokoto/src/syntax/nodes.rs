@@ -419,6 +419,18 @@ impl ObjectPat {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct VariantPat {
+    pub(crate) syntax: SyntaxNode,
+}
+impl VariantPat {
+    pub fn tag(&self) -> Option<Tag> {
+        support::child(&self.syntax)
+    }
+    pub fn pattern(&self) -> Option<Pattern> {
+        support::child(&self.syntax)
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct PatternFieldPun {
     pub(crate) syntax: SyntaxNode,
 }
@@ -449,6 +461,18 @@ impl PatternFieldPat {
     }
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub struct Tag {
+    pub(crate) syntax: SyntaxNode,
+}
+impl Tag {
+    pub fn hash_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![#])
+    }
+    pub fn ident_token(&self) -> Option<SyntaxToken> {
+        support::token(&self.syntax, T![ident])
+    }
+}
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Type {
     OptionalType(OptionalType),
     ParenType(ParenType),
@@ -475,6 +499,7 @@ pub enum Pattern {
     ParenPat(ParenPat),
     TuplePat(TuplePat),
     ObjectPat(ObjectPat),
+    VariantPat(VariantPat),
 }
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum PatternField {
@@ -946,6 +971,21 @@ impl AstNode for ObjectPat {
         &self.syntax
     }
 }
+impl AstNode for VariantPat {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == VARIANT_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
 impl AstNode for PatternFieldPun {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == PATTERN_FIELD_PUN
@@ -964,6 +1004,21 @@ impl AstNode for PatternFieldPun {
 impl AstNode for PatternFieldPat {
     fn can_cast(kind: SyntaxKind) -> bool {
         kind == PATTERN_FIELD_PAT
+    }
+    fn cast(syntax: SyntaxNode) -> Option<Self> {
+        if Self::can_cast(syntax.kind()) {
+            Some(Self { syntax })
+        } else {
+            None
+        }
+    }
+    fn syntax(&self) -> &SyntaxNode {
+        &self.syntax
+    }
+}
+impl AstNode for Tag {
+    fn can_cast(kind: SyntaxKind) -> bool {
+        kind == TAG
     }
     fn cast(syntax: SyntaxNode) -> Option<Self> {
         if Self::can_cast(syntax.kind()) {
@@ -1134,10 +1189,16 @@ impl From<ObjectPat> for Pattern {
         Pattern::ObjectPat(node)
     }
 }
+impl From<VariantPat> for Pattern {
+    fn from(node: VariantPat) -> Pattern {
+        Pattern::VariantPat(node)
+    }
+}
 impl AstNode for Pattern {
     fn can_cast(kind: SyntaxKind) -> bool {
         match kind {
-            WILDCARD_PAT | VAR_PAT | LITERAL_PAT | PAREN_PAT | TUPLE_PAT | OBJECT_PAT => true,
+            WILDCARD_PAT | VAR_PAT | LITERAL_PAT | PAREN_PAT | TUPLE_PAT | OBJECT_PAT
+            | VARIANT_PAT => true,
             _ => false,
         }
     }
@@ -1149,6 +1210,7 @@ impl AstNode for Pattern {
             PAREN_PAT => Pattern::ParenPat(ParenPat { syntax }),
             TUPLE_PAT => Pattern::TuplePat(TuplePat { syntax }),
             OBJECT_PAT => Pattern::ObjectPat(ObjectPat { syntax }),
+            VARIANT_PAT => Pattern::VariantPat(VariantPat { syntax }),
             _ => return None,
         };
         Some(res)
@@ -1161,6 +1223,7 @@ impl AstNode for Pattern {
             Pattern::ParenPat(it) => &it.syntax,
             Pattern::TuplePat(it) => &it.syntax,
             Pattern::ObjectPat(it) => &it.syntax,
+            Pattern::VariantPat(it) => &it.syntax,
         }
     }
 }
@@ -1371,12 +1434,22 @@ impl std::fmt::Display for ObjectPat {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
+impl std::fmt::Display for VariantPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
 impl std::fmt::Display for PatternFieldPun {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }
 }
 impl std::fmt::Display for PatternFieldPat {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Display::fmt(self.syntax(), f)
+    }
+}
+impl std::fmt::Display for Tag {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         std::fmt::Display::fmt(self.syntax(), f)
     }

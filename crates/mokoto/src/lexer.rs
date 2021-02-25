@@ -283,6 +283,7 @@ pub enum SyntaxKind {
     PAREN_PAT,
     TUPLE_PAT,
     OBJECT_PAT,
+    VARIANT_PAT,
 
     // Literals
     LITERAL,
@@ -290,6 +291,7 @@ pub enum SyntaxKind {
     // Modifiers
     PATH,
     NAME,
+    TAG,
     MutModifier,
     TYPE_ARGS,
     TYPE_PARAMS,
@@ -304,6 +306,7 @@ pub enum SyntaxKind {
     FUNC_SORT,
     PATTERN_FIELD_PUN,
     PATTERN_FIELD_PAT,
+    PATTERN_VARIANT_PAT,
     OBJECT_SORT,
 }
 

@@ -67,6 +67,9 @@ impl nodes::Pattern {
                 }
                 res
             }
+            Pattern::VariantPat(p) => {
+                p.pattern().map_or(vec![], |p| p.idents())
+            }
         }
     }
 }

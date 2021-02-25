@@ -21,3 +21,7 @@ null
 {x = y}
 ---
 {x : Nat = y}
+---
+#variant
+---
+#variant(_)
